@@ -1,0 +1,61 @@
+'=========================================================
+' Enterprise Theme
+'=========================================================
+
+!include common-styles.puml
+
+skinparam package {
+
+    BackgroundColor #F8FBFF
+
+    BorderColor #1565C0
+
+    FontColor #0D47A1
+
+}
+
+skinparam component {
+
+    BackgroundColor #E3F2FD
+
+    BorderColor #1976D2
+
+    FontColor Black
+
+}
+
+skinparam database {
+
+    BackgroundColor #E8F5E9
+
+    BorderColor #2E7D32
+
+}
+
+skinparam cloud {
+
+    BackgroundColor #FFF3E0
+
+    BorderColor #EF6C00
+
+}
+
+skinparam actor {
+
+    BackgroundColor #F5F5F5
+
+    BorderColor #616161
+
+}
+
+skinparam queue {
+
+    BackgroundColor #FFF8E1
+
+}
+
+skinparam storage {
+
+    BackgroundColor #F1F8E9
+
+}

@@ -1,0 +1,17 @@
+@startuml
+
+!include ../themes/c4-container-theme.puml
+
+Person(user, "User")
+
+System_Boundary(system, "Enterprise AI Platform") {
+
+    Container(api, "FastAPI", "Python", "REST API")
+
+}
+
+Rel(user, api, "Uses")
+
+SHOW_LEGEND()
+
+@enduml

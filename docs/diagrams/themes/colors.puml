@@ -1,0 +1,18 @@
+'=========================================================
+' Enterprise AI Orchestration Platform
+' Color Palette
+'=========================================================
+
+!define COLOR_USER          #F3E5F5
+!define COLOR_PLATFORM      #E3F2FD
+!define COLOR_AI            #E8EAF6
+!define COLOR_KNOWLEDGE     #E8F5E9
+!define COLOR_STORAGE       #F1F8E9
+!define COLOR_SECURITY      #FCE4EC
+!define COLOR_NETWORK       #FFF8E1
+!define COLOR_EXTERNAL      #ECEFF1
+!define COLOR_DATABASE      #E0F2F1
+!define COLOR_MONITORING    #FFF3E0
+!define COLOR_WARNING       #FFF9C4
+!define COLOR_HEADER        #1565C0
+!define COLOR_BORDER        #0D47A1

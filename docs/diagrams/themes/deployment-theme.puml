@@ -1,0 +1,10 @@
+'=========================================================
+' Deployment Theme
+'=========================================================
+
+!include common-styles.puml
+!include colors.puml
+!include metadata.puml
+!include enterprise-theme.puml
+
+!include ../lib/google-cloud/dist/GCPCommon.puml

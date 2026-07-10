@@ -1,0 +1,14 @@
+'=========================================================
+' C4 Component Theme
+'=========================================================
+
+!include ../lib/c4/C4_Component.puml
+
+!include common-styles.puml
+!include colors.puml
+!include metadata.puml
+!include enterprise-theme.puml
+
+LAYOUT_LEFT_RIGHT()
+
+SHOW_LEGEND()

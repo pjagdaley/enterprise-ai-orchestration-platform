@@ -1,0 +1,16 @@
+'=========================================================
+' C4 Deployment Theme
+'=========================================================
+
+!include ../lib/c4/C4_Deployment.puml
+
+!include ../lib/google-cloud/dist/GCPC4Integration.puml
+
+!include common-styles.puml
+!include colors.puml
+!include metadata.puml
+!include enterprise-theme.puml
+
+LAYOUT_LEFT_RIGHT()
+
+SHOW_LEGEND()

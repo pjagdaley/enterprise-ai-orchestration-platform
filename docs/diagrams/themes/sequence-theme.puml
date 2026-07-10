@@ -1,0 +1,7 @@
+'=========================================================
+' Sequence Theme
+'=========================================================
+
+!include common-styles.puml
+!include colors.puml
+!include metadata.puml
