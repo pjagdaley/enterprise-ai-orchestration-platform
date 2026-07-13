@@ -1,0 +1,176 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Bounded Contexts
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' KNOWLEDGE MANAGEMENT
+'=========================================================
+
+package "Knowledge Management Context" {
+
+rectangle "Document Ingestion" as Ingestion
+
+rectangle "Document Processing" as Processing
+
+rectangle "Metadata Management" as Metadata
+
+rectangle "Knowledge Repository" as Repository
+
+}
+
+'=========================================================
+' SEARCH
+'=========================================================
+
+package "Enterprise Search Context" {
+
+rectangle "Semantic Search" as Semantic
+
+rectangle "Hybrid Search" as Hybrid
+
+rectangle "Metadata Filtering" as Filtering
+
+rectangle "Cross Encoder Reranking" as Reranker
+
+}
+
+'=========================================================
+' CONVERSATIONAL AI
+'=========================================================
+
+package "Conversational AI Context" {
+
+rectangle "Chat Service" as Chat
+
+rectangle "Conversation Memory" as Memory
+
+rectangle "Context Builder" as Context
+
+rectangle "Prompt Builder" as Prompt
+
+}
+
+'=========================================================
+' AGENTIC AI
+'=========================================================
+
+package "Agent Orchestration Context" {
+
+rectangle "Planner Agent" as Planner
+
+rectangle "Supervisor Agent" as Supervisor
+
+rectangle "Worker Agents" as Workers
+
+rectangle "Workflow Engine" as Workflow
+
+}
+
+'=========================================================
+' INTEGRATION
+'=========================================================
+
+package "Enterprise Integration Context" {
+
+rectangle "SharePoint Connector" as SharePoint
+
+rectangle "Google Drive Connector" as GoogleDrive
+
+rectangle "SAP Connector" as SAP
+
+rectangle "Salesforce Connector" as Salesforce
+
+rectangle "REST API Connector" as RestAPI
+
+}
+
+'=========================================================
+' GOVERNANCE
+'=========================================================
+
+package "Administration & Governance Context" {
+
+rectangle "Identity Management" as Identity
+
+rectangle "Security Policies" as Security
+
+rectangle "Audit & Compliance" as Audit
+
+rectangle "Platform Administration" as Admin
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+Ingestion --> Processing
+
+Processing --> Metadata
+
+Metadata --> Repository
+
+Repository --> Semantic
+
+Repository --> Hybrid
+
+Semantic --> Filtering
+
+Hybrid --> Filtering
+
+Filtering --> Reranker
+
+Reranker --> Context
+
+Chat --> Context
+
+Context --> Prompt
+
+Prompt --> Planner
+
+Planner --> Supervisor
+
+Supervisor --> Workers
+
+Workers --> Workflow
+
+Workflow --> SharePoint
+
+Workflow --> GoogleDrive
+
+Workflow --> SAP
+
+Workflow --> Salesforce
+
+Workflow --> RestAPI
+
+Admin --> Identity
+
+Identity --> Security
+
+Security --> Audit
+
+@enduml
