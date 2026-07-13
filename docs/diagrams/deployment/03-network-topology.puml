@@ -1,0 +1,134 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Network Topology
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Business User" as BusinessUser
+
+cloud "Internet" as Internet
+
+rectangle "HTTPS Load Balancer" as LoadBalancer
+
+package "Google Cloud Platform" {
+
+    package "Cloud Run" {
+
+        rectangle "React Frontend" as React
+
+        rectangle "FastAPI Backend" as API
+
+    }
+
+    package "Vertex AI" {
+
+        rectangle "Gemini Models" as Gemini
+
+        rectangle "Embedding Models" as Embeddings
+
+    }
+
+    package "VPC Network" {
+
+        database "Qdrant VM" as Qdrant
+
+        database "Firestore" as Firestore
+
+        database "Cloud Storage" as GCS
+
+    }
+
+    package "Security" {
+
+        rectangle "Cloud IAM" as IAM
+
+        rectangle "Secret Manager" as Secrets
+
+    }
+
+    package "Operations" {
+
+        rectangle "Cloud Logging" as Logging
+
+        rectangle "Cloud Monitoring" as Monitoring
+
+    }
+
+}
+
+package "Enterprise Network" {
+
+    rectangle "SharePoint" as SharePoint
+
+    rectangle "Google Drive" as GoogleDrive
+
+    rectangle "GitHub" as GitHub
+
+    rectangle "SAP" as SAP
+
+    rectangle "Salesforce" as Salesforce
+
+    rectangle "REST APIs" as RestAPI
+
+}
+
+BusinessUser --> Internet
+
+Internet --> LoadBalancer
+
+LoadBalancer --> React
+
+React --> API
+
+API --> Gemini
+
+API --> Embeddings
+
+API --> Firestore
+
+API --> GCS
+
+API --> Qdrant
+
+API --> IAM
+
+API --> Secrets
+
+API --> Logging
+
+API --> Monitoring
+
+SharePoint --> GCS
+
+GoogleDrive --> GCS
+
+GitHub --> GCS
+
+SAP --> API
+
+Salesforce --> API
+
+RestAPI --> API
+
+@enduml

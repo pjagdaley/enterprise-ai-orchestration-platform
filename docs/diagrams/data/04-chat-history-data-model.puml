@@ -1,0 +1,172 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Chat History Data Model
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam ClassBorderColor #404040
+skinparam ClassBorderThickness 1.5
+skinparam ClassBackgroundColor white
+skinparam ClassAttributeIconSize 0
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' USER
+'=========================================================
+
+class User {
+
++ userId : UUID
+
++ email
+
++ displayName
+
++ role
+
++ createdAt
+
+}
+
+'=========================================================
+' SESSION
+'=========================================================
+
+class ChatSession {
+
++ sessionId : UUID
+
++ title
+
++ status
+
++ startedAt
+
++ lastActivity
+
++ model
+
+}
+
+'=========================================================
+' MESSAGE
+'=========================================================
+
+class Message {
+
++ messageId : UUID
+
++ role
+
++ content
+
++ tokenCount
+
++ createdAt
+
++ sequenceNo
+
+}
+
+'=========================================================
+' CONTEXT
+'=========================================================
+
+class ChatContext {
+
++ contextId
+
++ historySize
+
++ promptTokens
+
++ retrievedChunks
+
++ modelVersion
+
+}
+
+'=========================================================
+' DOCUMENT REFERENCES
+'=========================================================
+
+class RetrievedDocument {
+
++ documentId
+
++ chunkId
+
++ source
+
++ score
+
+}
+
+'=========================================================
+' AI RESPONSE
+'=========================================================
+
+class AIResponse {
+
++ responseId
+
++ finishReason
+
++ completionTokens
+
++ latency
+
++ createdAt
+
+}
+
+'=========================================================
+' FIRESTORE
+'=========================================================
+
+class FirestoreCollection {
+
++ users
+
++ chatSessions
+
++ messages
+
++ metadata
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+User "1" --> "*" ChatSession
+
+ChatSession "1" --> "*" Message
+
+Message "1" --> "1" ChatContext
+
+ChatContext "1" --> "*" RetrievedDocument
+
+Message "1" --> "0..1" AIResponse
+
+FirestoreCollection "1" --> "*" User
+
+FirestoreCollection "1" --> "*" ChatSession
+
+FirestoreCollection "1" --> "*" Message
+
+@enduml

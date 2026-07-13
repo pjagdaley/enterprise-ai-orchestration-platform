@@ -1,0 +1,94 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Monitoring & Observability Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+package "Application Services" {
+
+    rectangle "React Frontend" as React
+
+    rectangle "FastAPI Backend" as API
+
+    rectangle "LangGraph Runtime" as LangGraph
+
+    rectangle "Ingestion Service" as Ingestion
+
+}
+
+package "AI Platform" {
+
+    rectangle "Vertex AI" as VertexAI
+
+    database "Qdrant" as Qdrant
+
+    database "Firestore" as Firestore
+
+    database "Google Cloud Storage" as GCS
+
+}
+
+package "Observability Platform" {
+
+    rectangle "Cloud Logging" as Logging
+
+    rectangle "Cloud Monitoring" as Monitoring
+
+    rectangle "Error Reporting" as Errors
+
+    rectangle "Trace Explorer" as Trace
+
+    rectangle "Alerting Policies" as Alerts
+
+    rectangle "Operations Dashboard" as Dashboard
+
+}
+
+React --> Logging
+
+API --> Logging
+
+LangGraph --> Logging
+
+Ingestion --> Logging
+
+VertexAI --> Logging
+
+Qdrant --> Logging
+
+Firestore --> Logging
+
+GCS --> Logging
+
+Logging --> Monitoring
+
+Monitoring --> Errors
+
+Monitoring --> Trace
+
+Monitoring --> Alerts
+
+Monitoring --> Dashboard
+
+@enduml

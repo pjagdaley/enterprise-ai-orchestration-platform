@@ -1,0 +1,163 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Enterprise Knowledge Base Organization
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam DatabaseBorderColor #404040
+skinparam DatabaseBorderThickness 1.5
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+'=========================================================
+' ENTERPRISE SOURCES
+'=========================================================
+
+package "Enterprise Content Sources" {
+
+rectangle "SharePoint" as SharePoint
+
+rectangle "Google Drive" as GoogleDrive
+
+rectangle "GitHub" as GitHub
+
+rectangle "SAP" as SAP
+
+rectangle "Salesforce" as Salesforce
+
+rectangle "REST APIs" as RestAPI
+
+}
+
+'=========================================================
+' KNOWLEDGE REPOSITORY
+'=========================================================
+
+package "Google Cloud Storage" {
+
+folder "Finance" as Finance
+
+folder "Human Resources" as HR
+
+folder "Legal" as Legal
+
+folder "Engineering" as Engineering
+
+folder "Operations" as Operations
+
+folder "Sales & Marketing" as Sales
+
+}
+
+'=========================================================
+' METADATA
+'=========================================================
+
+package "Metadata Repository" {
+
+database "Firestore\nDocument Registry" as Registry
+
+database "Document Metadata" as Metadata
+
+database "Version History" as VersionHistory
+
+}
+
+'=========================================================
+' VECTOR INDEX
+'=========================================================
+
+package "Vector Knowledge Base" {
+
+database "Qdrant Collection" as Collection
+
+database "Vector Index" as VectorIndex
+
+database "Payload Metadata" as Payload
+
+}
+
+'=========================================================
+' AI RETRIEVAL
+'=========================================================
+
+package "Knowledge Retrieval" {
+
+rectangle "Metadata Filter" as MetadataFilter
+
+rectangle "Hybrid Search" as HybridSearch
+
+rectangle "Cross Encoder Reranker" as Reranker
+
+rectangle "Context Builder" as ContextBuilder
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+SharePoint --> Finance
+
+GoogleDrive --> HR
+
+GitHub --> Engineering
+
+SAP --> Operations
+
+Salesforce --> Sales
+
+RestAPI --> Legal
+
+Finance --> Registry
+
+HR --> Registry
+
+Engineering --> Registry
+
+Legal --> Registry
+
+Operations --> Registry
+
+Sales --> Registry
+
+Registry --> Metadata
+
+Registry --> VersionHistory
+
+Metadata --> Payload
+
+Payload --> Collection
+
+Collection --> VectorIndex
+
+VectorIndex --> HybridSearch
+
+Metadata --> MetadataFilter
+
+MetadataFilter --> HybridSearch
+
+HybridSearch --> Reranker
+
+Reranker --> ContextBuilder
+
+@enduml

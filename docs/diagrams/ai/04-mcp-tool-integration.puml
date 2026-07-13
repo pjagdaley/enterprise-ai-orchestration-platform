@@ -1,0 +1,105 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Model Context Protocol (MCP) Tool Integration
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+rectangle "Worker Agent" as Worker
+
+package "MCP Layer" {
+
+    rectangle "MCP Client" as MCPClient
+
+    rectangle "Tool Registry" as ToolRegistry
+
+}
+
+package "Enterprise Tools" {
+
+    rectangle "Knowledge Search Tool" as KnowledgeTool
+
+    rectangle "SAP Tool" as SAPTool
+
+    rectangle "Salesforce Tool" as SalesforceTool
+
+    rectangle "REST API Tool" as RestTool
+
+    rectangle "Email Tool" as EmailTool
+
+    rectangle "Document Tool" as DocumentTool
+
+}
+
+package "Enterprise Platforms" {
+
+    database "Qdrant" as Qdrant
+
+    database "Firestore" as Firestore
+
+    database "Google Cloud Storage" as GCS
+
+    rectangle "SAP" as SAP
+
+    rectangle "Salesforce" as Salesforce
+
+    rectangle "REST Services" as RestServices
+
+}
+
+Worker --> MCPClient : Tool Request
+
+MCPClient --> ToolRegistry : Discover Tool
+
+ToolRegistry --> KnowledgeTool
+
+ToolRegistry --> SAPTool
+
+ToolRegistry --> SalesforceTool
+
+ToolRegistry --> RestTool
+
+ToolRegistry --> EmailTool
+
+ToolRegistry --> DocumentTool
+
+KnowledgeTool --> Qdrant
+KnowledgeTool --> Firestore
+KnowledgeTool --> GCS
+
+SAPTool --> SAP
+
+SalesforceTool --> Salesforce
+
+RestTool --> RestServices
+
+KnowledgeTool --> MCPClient
+SAPTool --> MCPClient
+SalesforceTool --> MCPClient
+RestTool --> MCPClient
+EmailTool --> MCPClient
+DocumentTool --> MCPClient
+
+MCPClient --> Worker : Tool Response
+
+@enduml

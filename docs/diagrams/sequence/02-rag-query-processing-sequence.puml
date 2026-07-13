@@ -1,0 +1,89 @@
+@startuml
+
+title RAG Query Processing Sequence
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam ArrowThickness 1.5
+skinparam ParticipantBorderColor #404040
+skinparam ParticipantBackgroundColor white
+skinparam SequenceLifeLineBorderColor #404040
+skinparam SequenceLifeLineBackgroundColor white
+
+actor "Business User" as User
+
+participant "React Web Portal" as UI
+
+participant "FastAPI Backend" as API
+
+database "Firestore" as Firestore
+
+participant "LangGraph Runtime" as LangGraph
+
+participant "Planner Agent" as Planner
+
+participant "Supervisor Agent" as Supervisor
+
+participant "Worker Agent" as Worker
+
+database "Qdrant" as Qdrant
+
+database "Google Cloud Storage" as GCS
+
+participant "Vertex AI\nEmbeddings" as Embeddings
+
+participant "Gemini Model" as Gemini
+
+participant "Cross Encoder\nReranker" as Reranker
+
+User -> UI : Ask Question
+
+UI -> API : POST /query
+
+API -> Firestore : Load Chat History
+
+Firestore --> API : Conversation Context
+
+API -> LangGraph : Execute Workflow
+
+LangGraph -> Planner : Build Execution Plan
+
+Planner --> LangGraph : Plan
+
+LangGraph -> Supervisor : Assign Tasks
+
+Supervisor -> Worker : Retrieve Knowledge
+
+Worker -> Embeddings : Embed Query
+
+Embeddings --> Worker : Query Vector
+
+Worker -> Qdrant : Vector Search
+
+Qdrant --> Worker : Candidate Chunks
+
+Worker -> GCS : Retrieve Documents
+
+GCS --> Worker : Document Chunks
+
+Worker -> Reranker : Rank Results
+
+Reranker --> Worker : Top Context
+
+Worker -> Gemini : Generate Response
+
+Gemini --> Worker : Answer
+
+Worker --> Supervisor : Final Result
+
+Supervisor --> LangGraph : Complete
+
+LangGraph --> API : AI Response
+
+API -> Firestore : Save Conversation
+
+API --> UI : Response
+
+UI --> User : Display Answer
+
+@enduml

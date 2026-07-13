@@ -1,0 +1,128 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Business User Journey
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' BUSINESS USER
+'=========================================================
+
+actor "Business User" as User
+
+'=========================================================
+' USER EXPERIENCE
+'=========================================================
+
+package "User Experience" {
+
+rectangle "Login" as Login
+
+rectangle "Dashboard" as Dashboard
+
+rectangle "Select AI Assistant" as Assistant
+
+rectangle "Ask Question" as Question
+
+rectangle "View AI Response" as Response
+
+rectangle "Review Source Documents" as Sources
+
+rectangle "Continue Conversation" as Chat
+
+rectangle "Download / Export Results" as Export
+
+}
+
+'=========================================================
+' PLATFORM SERVICES
+'=========================================================
+
+package "Enterprise AI Platform" {
+
+rectangle "Authentication" as Auth
+
+rectangle "Conversation Service" as Conversation
+
+rectangle "Knowledge Search" as Search
+
+rectangle "Agentic AI" as Agents
+
+rectangle "Gemini Response Generation" as Gemini
+
+}
+
+'=========================================================
+' KNOWLEDGE PLATFORM
+'=========================================================
+
+package "Knowledge Platform" {
+
+database "Qdrant" as Qdrant
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+}
+
+'=========================================================
+' USER JOURNEY
+'=========================================================
+
+User --> Login
+
+Login --> Dashboard
+
+Dashboard --> Assistant
+
+Assistant --> Question
+
+Question --> Auth
+
+Auth --> Conversation
+
+Conversation --> Search
+
+Search --> Qdrant
+
+Search --> Firestore
+
+Search --> GCS
+
+Search --> Agents
+
+Agents --> Gemini
+
+Gemini --> Response
+
+Response --> Sources
+
+Sources --> Chat
+
+Chat --> Question
+
+Response --> Export
+
+@enduml

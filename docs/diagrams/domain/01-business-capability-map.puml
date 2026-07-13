@@ -1,0 +1,166 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Business Capability Map
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+'=========================================================
+' USERS
+'=========================================================
+
+actor "Business Users" as Users
+
+'=========================================================
+' CORE BUSINESS CAPABILITIES
+'=========================================================
+
+package "Enterprise AI Platform" {
+
+package "Knowledge Management" {
+
+rectangle "Document Ingestion" as Ingestion
+
+rectangle "Knowledge Repository" as Repository
+
+rectangle "Metadata Management" as Metadata
+
+rectangle "Document Versioning" as Versioning
+
+}
+
+package "Enterprise Search" {
+
+rectangle "Semantic Search" as Semantic
+
+rectangle "Hybrid Search" as Hybrid
+
+rectangle "Metadata Filtering" as Filtering
+
+rectangle "AI Reranking" as Reranking
+
+}
+
+package "Conversational AI" {
+
+rectangle "Enterprise Chat" as Chat
+
+rectangle "Context Management" as Context
+
+rectangle "Conversation Memory" as Memory
+
+rectangle "Prompt Engineering" as Prompt
+
+}
+
+package "Agentic AI" {
+
+rectangle "Task Planning" as Planning
+
+rectangle "Multi-Agent Collaboration" as Agents
+
+rectangle "Tool Invocation" as Tools
+
+rectangle "Workflow Orchestration" as Workflow
+
+}
+
+package "Enterprise Integration" {
+
+rectangle "SharePoint Integration" as SharePoint
+
+rectangle "Google Drive Integration" as GoogleDrive
+
+rectangle "SAP Integration" as SAP
+
+rectangle "Salesforce Integration" as Salesforce
+
+rectangle "REST API Integration" as RestAPI
+
+}
+
+package "Administration & Governance" {
+
+rectangle "User Administration" as UserAdmin
+
+rectangle "Security & IAM" as Security
+
+rectangle "AI Governance" as Governance
+
+rectangle "Monitoring & Audit" as Audit
+
+}
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+Users --> Chat
+
+Users --> Semantic
+
+Users --> Hybrid
+
+Users --> Planning
+
+Ingestion --> Repository
+
+Repository --> Semantic
+
+Repository --> Hybrid
+
+Metadata --> Filtering
+
+Filtering --> Reranking
+
+Chat --> Context
+
+Context --> Memory
+
+Memory --> Prompt
+
+Planning --> Agents
+
+Agents --> Tools
+
+Tools --> Workflow
+
+Workflow --> SharePoint
+
+Workflow --> GoogleDrive
+
+Workflow --> SAP
+
+Workflow --> Salesforce
+
+Workflow --> RestAPI
+
+UserAdmin --> Security
+
+Security --> Governance
+
+Governance --> Audit
+
+@enduml

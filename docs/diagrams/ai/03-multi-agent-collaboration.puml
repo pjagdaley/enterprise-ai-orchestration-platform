@@ -1,0 +1,114 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Multi-Agent Collaboration
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Business User" as User
+
+rectangle "FastAPI Backend" as API
+
+package "Agent Orchestrator" {
+
+    rectangle "Planner Agent" as Planner
+
+    rectangle "Supervisor Agent" as Supervisor
+
+}
+
+package "Worker Agents" {
+
+    rectangle "Knowledge Retrieval Agent" as RetrievalAgent
+
+    rectangle "Document Analysis Agent" as DocumentAgent
+
+    rectangle "Enterprise Integration Agent" as IntegrationAgent
+
+    rectangle "Reporting Agent" as ReportingAgent
+
+}
+
+package "Shared Services" {
+
+    rectangle "Memory Manager" as Memory
+
+    rectangle "State Manager" as State
+
+    rectangle "MCP Client" as MCP
+
+}
+
+package "Enterprise Services" {
+
+    rectangle "Vertex AI" as VertexAI
+
+    database "Qdrant" as Qdrant
+
+    database "Firestore" as Firestore
+
+    database "Google Cloud Storage" as GCS
+
+    rectangle "Enterprise APIs" as EnterpriseAPI
+
+}
+
+User --> API
+
+API --> Planner
+
+Planner --> Supervisor
+
+Supervisor --> RetrievalAgent
+
+Supervisor --> DocumentAgent
+
+Supervisor --> IntegrationAgent
+
+Supervisor --> ReportingAgent
+
+RetrievalAgent --> Qdrant
+
+RetrievalAgent --> Firestore
+
+DocumentAgent --> GCS
+
+IntegrationAgent --> EnterpriseAPI
+
+ReportingAgent --> VertexAI
+
+RetrievalAgent --> Memory
+
+DocumentAgent --> Memory
+
+IntegrationAgent --> Memory
+
+ReportingAgent --> Memory
+
+Memory --> State
+
+State --> Supervisor
+
+Supervisor --> API
+
+@enduml

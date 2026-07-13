@@ -1,0 +1,170 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Data Security Classification
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' DATA CLASSIFICATION
+'=========================================================
+
+package "Data Classification" {
+
+rectangle "Public Data" as Public
+
+rectangle "Internal Data" as Internal
+
+rectangle "Confidential Data" as Confidential
+
+rectangle "Restricted Data" as Restricted
+
+}
+
+'=========================================================
+' ENTERPRISE INFORMATION
+'=========================================================
+
+package "Enterprise Information Assets" {
+
+rectangle "Marketing Documents" as Marketing
+
+rectangle "Engineering Documents" as Engineering
+
+rectangle "HR Policies" as HR
+
+rectangle "Financial Reports" as Finance
+
+rectangle "Customer Information" as Customer
+
+rectangle "Source Code" as SourceCode
+
+}
+
+'=========================================================
+' SECURITY CONTROLS
+'=========================================================
+
+package "Security Controls" {
+
+rectangle "Encryption at Rest" as Rest
+
+rectangle "Encryption in Transit" as Transit
+
+rectangle "Identity & Access Management" as IAM
+
+rectangle "Role Based Access Control" as RBAC
+
+rectangle "Audit Logging" as Audit
+
+rectangle "Retention Policies" as Retention
+
+}
+
+'=========================================================
+' PLATFORM
+'=========================================================
+
+package "Enterprise AI Platform" {
+
+database "Google Cloud Storage" as GCS
+
+database "Firestore" as Firestore
+
+database "Qdrant" as Qdrant
+
+rectangle "Vertex AI" as Vertex
+
+}
+
+'=========================================================
+' CLASSIFICATION
+'=========================================================
+
+Marketing --> Public
+
+Engineering --> Internal
+
+HR --> Confidential
+
+Finance --> Confidential
+
+Customer --> Restricted
+
+SourceCode --> Restricted
+
+'=========================================================
+' SECURITY CONTROLS
+'=========================================================
+
+Public --> Transit
+
+Internal --> Rest
+
+Internal --> Transit
+
+Internal --> IAM
+
+Confidential --> Rest
+
+Confidential --> Transit
+
+Confidential --> IAM
+
+Confidential --> RBAC
+
+Confidential --> Audit
+
+Restricted --> Rest
+
+Restricted --> Transit
+
+Restricted --> IAM
+
+Restricted --> RBAC
+
+Restricted --> Audit
+
+Restricted --> Retention
+
+'=========================================================
+' PLATFORM STORAGE
+'=========================================================
+
+Rest --> GCS
+
+Rest --> Firestore
+
+Rest --> Qdrant
+
+Transit --> Vertex
+
+IAM --> Vertex
+
+IAM --> Firestore
+
+IAM --> GCS
+
+IAM --> Qdrant
+
+@enduml

@@ -1,0 +1,132 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Agentic AI Reference Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Business User" as User
+
+rectangle "FastAPI Backend" as API
+
+package "LangGraph Runtime" {
+
+rectangle "Planner Agent" as Planner
+
+rectangle "Supervisor Agent" as Supervisor
+
+rectangle "Worker Agent Pool" as Workers
+
+rectangle "Memory Manager" as Memory
+
+rectangle "Routing Engine" as Router
+
+rectangle "State Manager" as State
+
+}
+
+package "MCP Layer" {
+
+rectangle "MCP Client" as MCP
+
+rectangle "Tool Registry" as Registry
+
+}
+
+package "Enterprise Tools" {
+
+rectangle "Knowledge Search" as KnowledgeSearch
+
+rectangle "SAP Connector" as SAP
+
+rectangle "Salesforce Connector" as Salesforce
+
+rectangle "REST API Connector" as RestAPI
+
+rectangle "Email Service" as Email
+
+rectangle "Document Service" as Documents
+
+}
+
+package "Knowledge Platform" {
+
+database "Qdrant" as Qdrant
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+}
+
+package "Vertex AI" {
+
+rectangle "Gemini Models" as Gemini
+
+rectangle "Embedding Models" as Embeddings
+
+}
+
+User --> API
+
+API --> Planner
+
+Planner --> Supervisor
+
+Supervisor --> Router
+
+Router --> Workers
+
+Workers --> Memory
+
+Workers --> State
+
+Workers --> MCP
+
+MCP --> Registry
+
+Registry --> KnowledgeSearch
+
+Registry --> SAP
+
+Registry --> Salesforce
+
+Registry --> RestAPI
+
+Registry --> Email
+
+Registry --> Documents
+
+Workers --> Embeddings
+
+Workers --> Gemini
+
+Workers --> Qdrant
+
+Workers --> Firestore
+
+Workers --> GCS
+
+Supervisor --> API
+
+@enduml

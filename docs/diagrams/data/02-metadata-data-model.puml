@@ -1,0 +1,209 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Metadata Data Model
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam ClassBorderColor #404040
+skinparam ClassBorderThickness 1.5
+skinparam ClassBackgroundColor white
+skinparam ClassAttributeIconSize 0
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' SOURCE SYSTEM
+'=========================================================
+
+class SourceSystem {
+
++ sourceId : UUID
+
++ sourceType
+
++ sourceName
+
++ folderPath
+
++ syncSchedule
+
++ status
+
+}
+
+'=========================================================
+' DOCUMENT
+'=========================================================
+
+class Document {
+
++ documentId : UUID
+
++ documentName
+
++ fileType
+
++ fileSize
+
++ checksum
+
++ version
+
++ language
+
++ createdAt
+
++ updatedAt
+
++ status
+
+}
+
+'=========================================================
+' DOCUMENT METADATA
+'=========================================================
+
+class DocumentMetadata {
+
++ metadataId : UUID
+
++ owner
+
++ department
+
++ businessUnit
+
++ tags
+
++ classification
+
++ retentionPolicy
+
++ accessLevel
+
++ customMetadata
+
+}
+
+'=========================================================
+' CHUNK
+'=========================================================
+
+class Chunk {
+
++ chunkId : UUID
+
++ chunkNumber
+
++ chunkSize
+
++ tokenCount
+
++ pageNumber
+
++ section
+
++ embeddingModel
+
+}
+
+'=========================================================
+' VECTOR
+'=========================================================
+
+class Vector {
+
++ vectorId : UUID
+
++ embeddingDimension
+
++ embeddingModel
+
++ collection
+
++ similarityMetric
+
+}
+
+'=========================================================
+' STORAGE
+'=========================================================
+
+class GCSObject {
+
++ bucket
+
++ objectName
+
++ generation
+
++ storageClass
+
++ uri
+
+}
+
+'=========================================================
+' FIRESTORE
+'=========================================================
+
+class FirestoreMetadata {
+
++ documentId
+
++ metadata
+
++ ingestionStatus
+
++ indexed
+
++ lastIndexed
+
+}
+
+'=========================================================
+' QDRANT
+'=========================================================
+
+class QdrantPoint {
+
++ pointId
+
++ collection
+
++ payload
+
++ vector
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+SourceSystem "1" --> "*" Document
+
+Document "1" --> "1" DocumentMetadata
+
+Document "1" --> "*" Chunk
+
+Chunk "1" --> "1" Vector
+
+Document "1" --> "1" GCSObject
+
+Document "1" --> "1" FirestoreMetadata
+
+Vector "1" --> "1" QdrantPoint
+
+@enduml

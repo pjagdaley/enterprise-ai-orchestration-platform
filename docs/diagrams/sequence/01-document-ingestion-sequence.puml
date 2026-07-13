@@ -1,0 +1,61 @@
+@startuml
+
+title Document Ingestion Sequence
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam ArrowThickness 1.5
+skinparam ParticipantBorderColor #404040
+skinparam ParticipantBackgroundColor white
+skinparam SequenceLifeLineBorderColor #404040
+skinparam SequenceLifeLineBackgroundColor white
+
+actor "Enterprise Source" as Source
+
+participant "Ingestion Service" as Ingestion
+
+participant "Parser" as Parser
+
+participant "Chunking Engine" as Chunker
+
+participant "Embedding Generator" as Embedder
+
+participant "Vertex AI\nEmbeddings" as Vertex
+
+database "Qdrant" as Qdrant
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+Source -> Ingestion : New or Updated Document
+
+Ingestion -> GCS : Store Original Document
+
+Ingestion -> Parser : Parse Document
+
+Parser --> Ingestion : Parsed Text
+
+Ingestion -> Chunker : Split into Chunks
+
+Chunker --> Ingestion : Text Chunks
+
+loop For Each Chunk
+
+Ingestion -> Embedder : Generate Embedding
+
+Embedder -> Vertex : Embedding Request
+
+Vertex --> Embedder : Vector
+
+Embedder --> Ingestion : Embedding
+
+Ingestion -> Qdrant : Store Vector
+
+end
+
+Ingestion -> Firestore : Store Metadata
+
+Ingestion --> Source : Ingestion Complete
+
+@enduml

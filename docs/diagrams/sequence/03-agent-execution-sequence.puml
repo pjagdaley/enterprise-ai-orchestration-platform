@@ -1,0 +1,77 @@
+@startuml
+
+title Agent Execution Sequence
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam ArrowThickness 1.5
+skinparam ParticipantBorderColor #404040
+skinparam ParticipantBackgroundColor white
+skinparam SequenceLifeLineBorderColor #404040
+skinparam SequenceLifeLineBackgroundColor white
+
+participant "LangGraph Runtime" as LangGraph
+
+participant "Planner Agent" as Planner
+
+participant "Supervisor Agent" as Supervisor
+
+participant "Worker Agent" as Worker
+
+participant "MCP Client" as MCP
+
+participant "Tool Registry" as Registry
+
+participant "Vertex AI" as Vertex
+
+database "Qdrant" as Qdrant
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+LangGraph -> Planner : Receive User Request
+
+Planner -> Planner : Analyze Intent
+
+Planner --> LangGraph : Execution Plan
+
+LangGraph -> Supervisor : Start Workflow
+
+Supervisor -> Worker : Execute Retrieval Task
+
+Worker -> Firestore : Load Session Context
+
+Firestore --> Worker : Conversation Context
+
+Worker -> Vertex : Generate Query Embedding
+
+Vertex --> Worker : Embedding Vector
+
+Worker -> Qdrant : Semantic Search
+
+Qdrant --> Worker : Candidate Chunks
+
+Worker -> GCS : Load Documents
+
+GCS --> Worker : Document Content
+
+Worker -> MCP : Invoke External Tool
+
+MCP -> Registry : Discover Tool
+
+Registry --> MCP : Tool Definition
+
+MCP --> Worker : Tool Response
+
+Worker --> Supervisor : Retrieved Context
+
+Supervisor -> Vertex : Generate Final Answer
+
+Vertex --> Supervisor : AI Response
+
+Supervisor --> LangGraph : Workflow Complete
+
+LangGraph --> Planner : Notify Completion
+
+@enduml
