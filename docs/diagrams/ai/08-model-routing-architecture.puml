@@ -1,0 +1,94 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Model Routing Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Business User" as User
+
+rectangle "FastAPI Backend" as API
+
+rectangle "LangGraph Runtime" as LangGraph
+
+package "Model Routing Layer" {
+
+    rectangle "Request Analyzer" as Analyzer
+
+    rectangle "Model Router" as Router
+
+    rectangle "Policy Engine" as Policy
+
+}
+
+package "Vertex AI Models" {
+
+    rectangle "Gemini Flash" as Flash
+
+    rectangle "Gemini Pro" as Pro
+
+    rectangle "Embedding Models" as Embeddings
+
+}
+
+package "Enterprise Services" {
+
+    database "Qdrant" as Qdrant
+
+    database "Firestore" as Firestore
+
+    database "Google Cloud Storage" as GCS
+
+}
+
+User --> API
+
+API --> LangGraph
+
+LangGraph --> Analyzer
+
+Analyzer --> Policy
+
+Policy --> Router
+
+Router --> Flash : Simple Q&A
+
+Router --> Pro : Complex Reasoning
+
+Router --> Embeddings : Vector Generation
+
+Flash --> LangGraph
+
+Pro --> LangGraph
+
+Embeddings --> Qdrant
+
+LangGraph --> Firestore
+
+LangGraph --> GCS
+
+LangGraph --> API
+
+API --> User
+
+@enduml

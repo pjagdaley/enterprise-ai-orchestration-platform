@@ -1,0 +1,150 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title External Integrations Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' ENTERPRISE SYSTEMS
+'=========================================================
+
+package "Enterprise Systems" {
+
+rectangle "SharePoint" as SharePoint
+
+rectangle "Google Drive" as GoogleDrive
+
+rectangle "GitHub" as GitHub
+
+rectangle "SAP" as SAP
+
+rectangle "Salesforce" as Salesforce
+
+rectangle "REST APIs" as RestAPI
+
+}
+
+'=========================================================
+' CONNECTIVITY
+'=========================================================
+
+package "Secure Connectivity" {
+
+rectangle "HTTPS / TLS" as HTTPS
+
+rectangle "OAuth 2.0" as OAuth
+
+rectangle "Service Accounts" as SA
+
+}
+
+'=========================================================
+' ENTERPRISE AI PLATFORM
+'=========================================================
+
+package "Enterprise AI Platform" {
+
+rectangle "Integration Service" as Integration
+
+rectangle "Document Ingestion Service" as Ingestion
+
+rectangle "FastAPI Backend" as API
+
+rectangle "LangGraph Runtime" as LangGraph
+
+}
+
+'=========================================================
+' KNOWLEDGE PLATFORM
+'=========================================================
+
+package "Knowledge Platform" {
+
+database "Google Cloud Storage" as GCS
+
+database "Firestore" as Firestore
+
+database "Qdrant" as Qdrant
+
+rectangle "Vertex AI" as Vertex
+
+}
+
+'=========================================================
+' PLATFORM SECURITY
+'=========================================================
+
+package "Security & Governance" {
+
+rectangle "Cloud IAM" as IAM
+
+rectangle "Secret Manager" as Secrets
+
+rectangle "Cloud Logging" as Logging
+
+}
+
+'=========================================================
+' EXTERNAL CONNECTIVITY
+'=========================================================
+
+SharePoint --> HTTPS
+
+GoogleDrive --> HTTPS
+
+GitHub --> HTTPS
+
+SAP --> HTTPS
+
+Salesforce --> HTTPS
+
+RestAPI --> HTTPS
+
+HTTPS --> OAuth
+
+OAuth --> SA
+
+SA --> Integration
+
+Integration --> Ingestion
+
+Integration --> API
+
+API --> LangGraph
+
+Ingestion --> GCS
+
+Ingestion --> Firestore
+
+Ingestion --> Qdrant
+
+LangGraph --> Vertex
+
+API --> IAM
+
+API --> Secrets
+
+API --> Logging
+
+@enduml

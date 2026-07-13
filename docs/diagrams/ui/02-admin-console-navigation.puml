@@ -1,0 +1,152 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Administrator Console Navigation
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' ADMINISTRATOR
+'=========================================================
+
+actor "Platform Administrator" as Admin
+
+'=========================================================
+' ADMIN CONSOLE
+'=========================================================
+
+package "Administration Console" {
+
+rectangle "Admin Dashboard" as Dashboard
+
+rectangle "User Management" as Users
+
+rectangle "Role & Permission Management" as Roles
+
+rectangle "Knowledge Base Management" as KB
+
+rectangle "Document Management" as Documents
+
+rectangle "AI Model Configuration" as Models
+
+rectangle "Agent Configuration" as Agents
+
+rectangle "MCP Tool Management" as MCP
+
+rectangle "Prompt Template Management" as Prompts
+
+rectangle "System Monitoring" as Monitoring
+
+rectangle "Audit Logs" as Audit
+
+rectangle "Security Settings" as Security
+
+rectangle "Platform Configuration" as Settings
+
+}
+
+'=========================================================
+' PLATFORM SERVICES
+'=========================================================
+
+package "Enterprise AI Platform" {
+
+rectangle "FastAPI Backend" as API
+
+rectangle "LangGraph Runtime" as LangGraph
+
+rectangle "Vertex AI" as Vertex
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+database "Qdrant" as Qdrant
+
+}
+
+'=========================================================
+' NAVIGATION
+'=========================================================
+
+Admin --> Dashboard
+
+Dashboard --> Users
+
+Dashboard --> Roles
+
+Dashboard --> KB
+
+Dashboard --> Documents
+
+Dashboard --> Models
+
+Dashboard --> Agents
+
+Dashboard --> MCP
+
+Dashboard --> Prompts
+
+Dashboard --> Monitoring
+
+Dashboard --> Audit
+
+Dashboard --> Security
+
+Dashboard --> Settings
+
+'=========================================================
+' PLATFORM ACCESS
+'=========================================================
+
+Users --> API
+
+Roles --> API
+
+KB --> Firestore
+
+Documents --> GCS
+
+Models --> Vertex
+
+Agents --> LangGraph
+
+MCP --> LangGraph
+
+Prompts --> Firestore
+
+Monitoring --> API
+
+Audit --> Firestore
+
+Security --> API
+
+Settings --> API
+
+API --> LangGraph
+
+LangGraph --> Vertex
+
+LangGraph --> Qdrant
+
+@enduml

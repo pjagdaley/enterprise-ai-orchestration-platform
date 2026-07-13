@@ -1,0 +1,122 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Private Connectivity Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' SERVERLESS
+'=========================================================
+
+package "Serverless Platform" {
+
+rectangle "Cloud Run\nReact + FastAPI" as CloudRun
+
+rectangle "Direct VPC Egress" as VPCEgress
+
+}
+
+'=========================================================
+' CUSTOMER VPC
+'=========================================================
+
+package "Customer VPC" {
+
+package "Private Subnet" {
+
+database "Qdrant\nCompute Engine VM" as Qdrant
+
+}
+
+}
+
+'=========================================================
+' GOOGLE MANAGED SERVICES
+'=========================================================
+
+package "Google Managed Services" {
+
+rectangle "Vertex AI" as Vertex
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+rectangle "Cloud IAM" as IAM
+
+rectangle "Secret Manager" as Secrets
+
+}
+
+'=========================================================
+' SECURITY
+'=========================================================
+
+package "Network Security" {
+
+rectangle "Private IP Communication" as PrivateIP
+
+rectangle "TLS Encryption" as TLS
+
+rectangle "IAM Authorization" as Auth
+
+}
+
+'=========================================================
+' PRIVATE CONNECTIVITY
+'=========================================================
+
+CloudRun --> VPCEgress
+
+VPCEgress --> Qdrant
+
+CloudRun --> Vertex
+
+CloudRun --> Firestore
+
+CloudRun --> GCS
+
+CloudRun --> IAM
+
+CloudRun --> Secrets
+
+PrivateIP --> Qdrant
+
+TLS --> Vertex
+
+TLS --> Firestore
+
+TLS --> GCS
+
+TLS --> Qdrant
+
+Auth --> IAM
+
+IAM --> Vertex
+
+IAM --> Firestore
+
+IAM --> GCS
+
+@enduml

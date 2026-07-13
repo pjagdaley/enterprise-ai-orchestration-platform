@@ -1,0 +1,149 @@
+@startuml
+
+!theme plain
+
+title Enterprise AI Orchestration Platform
+title Enterprise Knowledge Platform
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+'=========================================================
+' Enterprise Sources
+'=========================================================
+
+package "Enterprise Sources" {
+
+rectangle "SharePoint" as SharePoint
+
+rectangle "Google Drive" as GoogleDrive
+
+rectangle "GitHub" as GitHub
+
+rectangle "SAP" as SAP
+
+rectangle "Salesforce" as Salesforce
+
+rectangle "REST APIs" as RestAPI
+
+}
+
+'=========================================================
+' Ingestion Pipeline
+'=========================================================
+
+package "Document Ingestion Pipeline" {
+
+rectangle "Ingestion Service" as Ingestion
+
+rectangle "Document Parser" as Parser
+
+rectangle "Chunking Engine" as Chunker
+
+rectangle "Metadata Extractor" as Metadata
+
+rectangle "Embedding Generator" as Embedder
+
+}
+
+'=========================================================
+' Vertex AI
+'=========================================================
+
+package "Vertex AI" {
+
+rectangle "Embedding Models" as Embeddings
+
+}
+
+'=========================================================
+' Knowledge Platform
+'=========================================================
+
+package "Enterprise Knowledge Platform" {
+
+database "Google Cloud Storage" as GCS
+
+database "Qdrant Vector Database" as Qdrant
+
+database "Firestore Metadata Store" as Firestore
+
+}
+
+'=========================================================
+' Search Services
+'=========================================================
+
+package "Search Services" {
+
+rectangle "Hybrid Search" as HybridSearch
+
+rectangle "Metadata Filter" as MetadataFilter
+
+rectangle "Reranker" as Reranker
+
+}
+
+'=========================================================
+' Ingestion Flow
+'=========================================================
+
+SharePoint --> Ingestion
+
+GoogleDrive --> Ingestion
+
+GitHub --> Ingestion
+
+SAP --> Ingestion
+
+Salesforce --> Ingestion
+
+RestAPI --> Ingestion
+
+Ingestion --> Parser
+
+Parser --> Chunker
+
+Chunker --> Metadata
+
+Metadata --> Embedder
+
+Embedder --> Embeddings
+
+Embedder --> Qdrant
+
+Metadata --> Firestore
+
+Parser --> GCS
+
+'=========================================================
+' Query Flow
+'=========================================================
+
+HybridSearch --> Qdrant
+
+HybridSearch --> Firestore
+
+HybridSearch --> GCS
+
+HybridSearch --> MetadataFilter
+
+MetadataFilter --> Reranker
+
+@enduml

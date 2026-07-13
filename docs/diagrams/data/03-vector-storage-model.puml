@@ -1,0 +1,150 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Vector Storage Model
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam ClassBorderColor #404040
+skinparam ClassBorderThickness 1.5
+skinparam ClassBackgroundColor white
+skinparam ClassAttributeIconSize 0
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' DOCUMENT
+'=========================================================
+
+class Document {
+
++ documentId : UUID
+
++ documentName
+
++ sourceSystem
+
++ version
+
++ language
+
+}
+
+'=========================================================
+' CHUNK
+'=========================================================
+
+class Chunk {
+
++ chunkId : UUID
+
++ chunkIndex
+
++ pageNumber
+
++ section
+
++ tokenCount
+
++ text
+
+}
+
+'=========================================================
+' EMBEDDING
+'=========================================================
+
+class Embedding {
+
++ embeddingId : UUID
+
++ model
+
++ dimensions
+
++ createdAt
+
+}
+
+'=========================================================
+' VECTOR POINT
+'=========================================================
+
+class QdrantPoint {
+
++ pointId
+
++ vector
+
++ payload
+
++ score
+
+}
+
+'=========================================================
+' PAYLOAD
+'=========================================================
+
+class Payload {
+
++ documentId
+
++ chunkId
+
++ source
+
++ department
+
++ tags
+
++ accessLevel
+
++ fileType
+
++ createdAt
+
+}
+
+'=========================================================
+' COLLECTION
+'=========================================================
+
+class Collection {
+
++ collectionName
+
++ vectorDimension
+
++ similarityMetric
+
++ indexingStrategy
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+Document "1" --> "*" Chunk
+
+Chunk "1" --> "1" Embedding
+
+Embedding "1" --> "1" QdrantPoint
+
+QdrantPoint "1" --> "1" Payload
+
+Collection "1" --> "*" QdrantPoint
+
+@endumls

@@ -1,0 +1,268 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Enterprise AI Ecosystem
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+'==========================================================================
+' USERS
+'==========================================================================
+
+actor "Business User" as BusinessUser
+
+actor "Platform Administrator" as PlatformAdmin
+
+'==========================================================================
+' APPLICATION
+'==========================================================================
+
+package "Application Layer" {
+
+rectangle "React Web Portal" as React
+
+rectangle "FastAPI Backend" as API
+
+}
+
+'==========================================================================
+' AI ORCHESTRATION
+'==========================================================================
+
+package "AI Orchestration Layer" {
+
+rectangle "LangGraph Runtime" as LangGraph
+
+rectangle "Planner Agent" as Planner
+
+rectangle "Supervisor Agent" as Supervisor
+
+rectangle "Worker Agent Pool" as Workers
+
+rectangle "Memory Manager" as Memory
+
+rectangle "State Manager" as State
+
+}
+
+'==========================================================================
+' MCP
+'==========================================================================
+
+package "Model Context Protocol" {
+
+rectangle "MCP Client" as MCP
+
+rectangle "Tool Registry" as Registry
+
+}
+
+'==========================================================================
+' ENTERPRISE TOOLS
+'==========================================================================
+
+package "Enterprise Tools" {
+
+rectangle "Knowledge Search" as KnowledgeTool
+
+rectangle "SAP Connector" as SAPTool
+
+rectangle "Salesforce Connector" as SalesforceTool
+
+rectangle "REST API Connector" as RestTool
+
+rectangle "Email Connector" as EmailTool
+
+rectangle "Document Service" as DocumentTool
+
+}
+
+'==========================================================================
+' RAG PLATFORM
+'==========================================================================
+
+package "Enterprise Knowledge Platform" {
+
+rectangle "Hybrid Search" as HybridSearch
+
+rectangle "Metadata Filter" as MetadataFilter
+
+rectangle "Cross Encoder Reranker" as Reranker
+
+database "Qdrant Vector Database" as Qdrant
+
+database "Firestore Metadata Store" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+}
+
+'==========================================================================
+' AI MODELS
+'==========================================================================
+
+package "Vertex AI" {
+
+rectangle "Gemini Models" as Gemini
+
+rectangle "Embedding Models" as Embeddings
+
+rectangle "Safety Filters" as Safety
+
+}
+
+'==========================================================================
+' GOVERNANCE
+'==========================================================================
+
+package "AI Governance" {
+
+rectangle "Policy Engine" as Policy
+
+rectangle "Prompt Validation" as PromptValidation
+
+rectangle "Grounding Verification" as Grounding
+
+rectangle "Audit Logging" as Audit
+
+}
+
+'==========================================================================
+' OPERATIONS
+'==========================================================================
+
+package "Platform Operations" {
+
+rectangle "Cloud Logging" as Logging
+
+rectangle "Cloud Monitoring" as Monitoring
+
+rectangle "Secret Manager" as Secrets
+
+rectangle "Cloud IAM" as IAM
+
+}
+
+'==========================================================================
+' ENTERPRISE SYSTEMS
+'==========================================================================
+
+package "Enterprise Systems" {
+
+rectangle "SharePoint" as SharePoint
+
+rectangle "Google Drive" as GoogleDrive
+
+rectangle "GitHub" as GitHub
+
+rectangle "SAP" as SAP
+
+rectangle "Salesforce" as Salesforce
+
+rectangle "REST APIs" as RestAPI
+
+}
+
+'==========================================================================
+' RELATIONSHIPS
+'==========================================================================
+
+BusinessUser --> React
+
+PlatformAdmin --> React
+
+React --> API
+
+API --> PromptValidation
+
+PromptValidation --> Policy
+
+Policy --> LangGraph
+
+LangGraph --> Planner
+
+Planner --> Supervisor
+
+Supervisor --> Workers
+
+Workers --> Memory
+
+Workers --> State
+
+Workers --> MCP
+
+MCP --> Registry
+
+Registry --> KnowledgeTool
+
+Registry --> SAPTool
+
+Registry --> SalesforceTool
+
+Registry --> RestTool
+
+Registry --> EmailTool
+
+Registry --> DocumentTool
+
+Workers --> Embeddings
+
+Workers --> Gemini
+
+Workers --> Safety
+
+Workers --> HybridSearch
+
+HybridSearch --> MetadataFilter
+
+MetadataFilter --> Reranker
+
+Reranker --> Qdrant
+
+MetadataFilter --> Firestore
+
+Reranker --> GCS
+
+Workers --> Audit
+
+Audit --> Logging
+
+Logging --> Monitoring
+
+API --> Secrets
+
+API --> IAM
+
+SharePoint --> GCS
+
+GoogleDrive --> GCS
+
+GitHub --> GCS
+
+SAP --> SAPTool
+
+Salesforce --> SalesforceTool
+
+RestAPI --> RestTool
+
+@enduml

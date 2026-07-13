@@ -1,0 +1,393 @@
+@startuml
+
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' Executive Architecture Overview
+'==============================================================================
+
+!theme plain
+
+title Enterprise AI Orchestration Platform
+title Executive Architecture Overview
+
+top to bottom direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 8
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+skinparam componentStyle rectangle
+
+skinparam package {
+    BackgroundColor White
+}
+
+skinparam rectangle {
+    BackgroundColor White
+}
+
+skinparam database {
+    BackgroundColor White
+}
+
+skinparam actor {
+    BackgroundColor White
+}
+
+'==============================================================================
+' USERS
+'==============================================================================
+
+package "Users" {
+
+actor "Business User" as BusinessUser
+actor "Platform Administrator" as PlatformAdmin
+actor "AI Administrator" as AIAdmin
+
+}
+
+'==============================================================================
+' PRESENTATION LAYER
+'==============================================================================
+
+package "Presentation Layer" {
+
+rectangle "React Web Portal" as ReactPortal
+
+rectangle "Business Chat" as Chat
+
+rectangle "Administration Portal" as AdminPortal
+
+}
+
+BusinessUser --> Chat
+PlatformAdmin --> AdminPortal
+AIAdmin --> AdminPortal
+
+Chat --> ReactPortal
+AdminPortal --> ReactPortal
+
+'==============================================================================
+' APPLICATION LAYER
+'==============================================================================
+
+package "Application Services" {
+
+rectangle "FastAPI Backend" as API
+
+rectangle "Authentication\nService" as Auth
+
+rectangle "Workflow\nService" as Workflow
+
+}
+
+ReactPortal --> API
+
+API --> Auth
+
+API --> Workflow
+
+'==============================================================================
+' AGENTIC AI RUNTIME
+'==============================================================================
+
+package "Agentic AI Runtime" {
+
+rectangle "LangGraph Runtime" as LangGraph
+
+rectangle "Planner Agent" as Planner
+
+rectangle "Supervisor Agent" as Supervisor
+
+rectangle "Worker Agents" as Workers
+
+rectangle "MCP Client" as MCP
+
+rectangle "Tool Registry" as ToolRegistry
+
+}
+
+' IMPORTANT:
+' Workflow --> LangGraph has been intentionally moved
+' after the LangGraph definition to avoid the
+' "LangGraph already defined" PlantUML error.
+
+Workflow --> LangGraph
+
+LangGraph --> Planner
+
+LangGraph --> Supervisor
+
+LangGraph --> Workers
+
+Supervisor --> MCP
+
+MCP --> ToolRegistry
+
+'==============================================================================
+' VERTEX AI
+'==============================================================================
+
+package "Vertex AI" {
+
+rectangle "Gemini Models" as Gemini
+
+rectangle "Embedding Models" as Embeddings
+
+rectangle "Safety & Grounding" as Safety
+
+}
+
+Workers --> Gemini
+Workers --> Embeddings
+Workers --> Safety
+
+
+'==============================================================================
+' ENTERPRISE KNOWLEDGE PLATFORM
+'==============================================================================
+
+package "Enterprise Knowledge Platform" {
+
+database "Qdrant\nVector Database" as Qdrant
+
+database "Firestore\nMetadata Store" as Firestore
+
+database "Google Cloud Storage\nKnowledge Repository" as GCS
+
+}
+
+Workers --> Qdrant
+Workers --> Firestore
+Workers --> GCS
+
+
+'==============================================================================
+' PLATFORM SERVICES
+'==============================================================================
+
+package "Platform Services" {
+
+rectangle "Identity & Access\nManagement" as IAM
+
+rectangle "Secret Manager" as Secrets
+
+rectangle "Cloud Logging" as Logging
+
+rectangle "Cloud Monitoring" as Monitoring
+
+rectangle "CI/CD Pipeline" as CICD
+
+}
+
+API --> IAM
+API --> Secrets
+API --> Logging
+API --> Monitoring
+CICD --> API
+
+
+'==============================================================================
+' ENTERPRISE SYSTEMS
+'==============================================================================
+
+package "Enterprise Systems & Knowledge Sources" {
+
+rectangle "SharePoint" as SharePoint
+
+rectangle "Google Drive" as GoogleDrive
+
+rectangle "GitHub" as GitHub
+
+rectangle "SAP" as SAP
+
+rectangle "Salesforce" as Salesforce
+
+rectangle "REST APIs" as RestAPI
+
+}
+
+SharePoint --> GCS
+GoogleDrive --> GCS
+GitHub --> GCS
+
+SAP --> API
+Salesforce --> API
+RestAPI --> API
+
+
+'==============================================================================
+' CROSS PLATFORM RELATIONSHIPS
+'==============================================================================
+
+Planner --> Supervisor
+
+Supervisor --> Workers
+
+Workers --> ToolRegistry
+
+Workers --> Logging
+
+Workers --> Monitoring
+
+'==============================================================================
+' ENTERPRISE KNOWLEDGE
+'==============================================================================
+
+note right of GCS
+
+<b>Enterprise Knowledge Repository</b>
+
+• PDF Documents
+• Microsoft Word
+• Excel Workbooks
+• PowerPoint
+• JSON Files
+• HTML Documents
+• Images
+• Source Code
+
+end note
+
+
+note left of Qdrant
+
+<b>Hybrid Search</b>
+
+• Semantic Search
+
+• Vector Similarity
+
+• Metadata Filtering
+
+• Hybrid Retrieval
+
+• Reranking
+
+end note
+
+
+note right of Firestore
+
+<b>Conversation Store</b>
+
+• User Sessions
+
+• Chat History
+
+• Conversation Context
+
+• Document Registry
+
+• Metadata
+
+end note
+
+
+'==============================================================================
+' AI RUNTIME
+'==============================================================================
+
+note right of LangGraph
+
+<b>Agentic AI Runtime</b>
+
+• Planning
+
+• Task Orchestration
+
+• Tool Calling
+
+• Memory
+
+• Routing
+
+• Agent Execution
+
+• Multi-Agent Coordination
+
+end note
+
+
+'==============================================================================
+' APPLICATION PLATFORM
+'==============================================================================
+
+note bottom of API
+
+<b>Enterprise AI Platform</b>
+
+• FastAPI
+
+• REST APIs
+
+• Authentication
+
+• Streaming Responses
+
+• Workflow Management
+
+• Session Management
+
+end note
+
+
+'==============================================================================
+' EXECUTIVE SUMMARY
+'==============================================================================
+
+note top of ReactPortal
+
+<b>Enterprise AI Orchestration Platform</b>
+
+A production-grade enterprise platform for
+RAG, Agentic AI, Multi-Agent Workflows,
+Enterprise Knowledge Management and
+AI-powered Business Automation.
+
+end note
+
+
+'==============================================================================
+' LEGEND
+'==============================================================================
+
+legend right
+
+|= Layer |= Technology |
+
+| Presentation | React |
+
+| Backend | FastAPI |
+
+| AI Runtime | LangGraph |
+
+| LLM | Gemini |
+
+| Embeddings | Vertex AI |
+
+| Vector Store | Qdrant |
+
+| Metadata | Firestore |
+
+| Knowledge Repository | Google Cloud Storage |
+
+| Enterprise Systems | SAP / Salesforce / SharePoint / GitHub |
+
+endlegend
+
+@enduml

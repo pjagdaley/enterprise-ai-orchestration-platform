@@ -1,0 +1,122 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title AI Safety & Governance Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Business User" as User
+
+rectangle "React Web Portal" as React
+
+rectangle "FastAPI Backend" as API
+
+rectangle "LangGraph Runtime" as LangGraph
+
+package "AI Governance Layer" {
+
+rectangle "Authentication & Authorization" as Auth
+
+rectangle "Prompt Validation" as PromptValidation
+
+rectangle "PII Detection" as PII
+
+rectangle "Content Safety" as Safety
+
+rectangle "Grounding Verification" as Grounding
+
+rectangle "Policy Engine" as Policy
+
+rectangle "Response Validation" as ResponseValidation
+
+rectangle "Audit Logger" as Audit
+
+}
+
+package "Vertex AI" {
+
+rectangle "Gemini Models" as Gemini
+
+rectangle "Safety Filters" as SafetyFilters
+
+}
+
+package "Knowledge Platform" {
+
+database "Qdrant" as Qdrant
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+}
+
+package "Operations" {
+
+rectangle "Cloud Logging" as Logging
+
+rectangle "Cloud Monitoring" as Monitoring
+
+}
+
+User --> React
+
+React --> API
+
+API --> Auth
+
+Auth --> PromptValidation
+
+PromptValidation --> PII
+
+PII --> Policy
+
+Policy --> LangGraph
+
+LangGraph --> Qdrant
+
+LangGraph --> Firestore
+
+LangGraph --> GCS
+
+LangGraph --> Gemini
+
+Gemini --> SafetyFilters
+
+SafetyFilters --> Grounding
+
+Grounding --> ResponseValidation
+
+ResponseValidation --> Audit
+
+Audit --> Logging
+
+Logging --> Monitoring
+
+ResponseValidation --> API
+
+API --> React
+
+React --> User
+
+@enduml

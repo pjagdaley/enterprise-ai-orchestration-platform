@@ -1,0 +1,117 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Google Cloud VPC Network Topology
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam DatabaseBorderColor #404040
+skinparam DatabaseBorderThickness 1.5
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' USERS
+'=========================================================
+
+actor "Business User" as User
+
+cloud "Internet" as Internet
+
+'=========================================================
+' GOOGLE CLOUD EDGE
+'=========================================================
+
+package "Google Cloud Edge" {
+
+rectangle "HTTPS Load Balancer" as LoadBalancer
+
+}
+
+'=========================================================
+' GOOGLE CLOUD MANAGED SERVICES
+'=========================================================
+
+package "Google Cloud Managed Services" {
+
+rectangle "Cloud Run\nReact + FastAPI" as CloudRun
+
+rectangle "Direct VPC Egress" as VPCEgress
+
+rectangle "Vertex AI" as VertexAI
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+rectangle "Cloud IAM" as IAM
+
+rectangle "Secret Manager" as SecretManager
+
+rectangle "Cloud Logging" as Logging
+
+rectangle "Cloud Monitoring" as Monitoring
+
+}
+
+'=========================================================
+' CUSTOMER VPC
+'=========================================================
+
+package "Customer VPC Network" {
+
+package "Private Subnet" {
+
+database "Qdrant\nCompute Engine VM" as Qdrant
+
+}
+
+}
+
+'=========================================================
+' NETWORK FLOW
+'=========================================================
+
+User --> Internet
+
+Internet --> LoadBalancer
+
+LoadBalancer --> CloudRun
+
+CloudRun --> VertexAI
+
+CloudRun --> Firestore
+
+CloudRun --> GCS
+
+CloudRun --> IAM
+
+CloudRun --> SecretManager
+
+CloudRun --> Logging
+
+Logging --> Monitoring
+
+CloudRun --> VPCEgress
+
+VPCEgress --> Qdrant
+
+@enduml

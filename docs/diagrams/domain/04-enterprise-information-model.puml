@@ -1,0 +1,208 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Enterprise Information Model
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam ClassBorderColor #404040
+skinparam ClassBorderThickness 1.5
+skinparam ClassBackgroundColor white
+skinparam ClassAttributeIconSize 0
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' USER
+'=========================================================
+
+class User {
+
++ userId
+
++ userName
+
++ email
+
++ department
+
++ role
+
+}
+
+'=========================================================
+' SESSION
+'=========================================================
+
+class ChatSession {
+
++ sessionId
+
++ title
+
++ status
+
++ createdAt
+
+}
+
+'=========================================================
+' MESSAGE
+'=========================================================
+
+class Message {
+
++ messageId
+
++ role
+
++ content
+
++ createdAt
+
+}
+
+'=========================================================
+' KNOWLEDGE DOCUMENT
+'=========================================================
+
+class KnowledgeDocument {
+
++ documentId
+
++ title
+
++ documentType
+
++ version
+
++ owner
+
++ sourceSystem
+
+}
+
+'=========================================================
+' DOCUMENT CHUNK
+'=========================================================
+
+class DocumentChunk {
+
++ chunkId
+
++ chunkNumber
+
++ tokenCount
+
++ pageNumber
+
+}
+
+'=========================================================
+' EMBEDDING
+'=========================================================
+
+class EmbeddingVector {
+
++ vectorId
+
++ model
+
++ dimensions
+
+}
+
+'=========================================================
+' SEARCH REQUEST
+'=========================================================
+
+class SearchRequest {
+
++ requestId
+
++ query
+
++ searchType
+
++ timestamp
+
+}
+
+'=========================================================
+' SEARCH RESULT
+'=========================================================
+
+class SearchResult {
+
++ resultId
+
++ similarityScore
+
++ rerankScore
+
+}
+
+'=========================================================
+' AI RESPONSE
+'=========================================================
+
+class AIResponse {
+
++ responseId
+
++ model
+
++ completionTokens
+
++ latency
+
+}
+
+'=========================================================
+' ENTERPRISE SYSTEM
+'=========================================================
+
+class EnterpriseSystem {
+
++ systemId
+
++ name
+
++ type
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+User "1" --> "*" ChatSession
+
+ChatSession "1" --> "*" Message
+
+Message "1" --> "0..1" SearchRequest
+
+SearchRequest "1" --> "*" SearchResult
+
+SearchResult "*" --> "1" DocumentChunk
+
+DocumentChunk "*" --> "1" KnowledgeDocument
+
+DocumentChunk "1" --> "1" EmbeddingVector
+
+SearchRequest "1" --> "1" AIResponse
+
+EnterpriseSystem "1" --> "*" KnowledgeDocument
+
+@enduml

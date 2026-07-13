@@ -1,0 +1,95 @@
+@startuml
+
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' C4 Level 1 - System Context
+'==============================================================================
+
+!theme plain
+
+title Enterprise AI Orchestration Platform
+title C4 Model - Level 1 - System Context
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+'==============================================================================
+' USERS
+'==============================================================================
+
+package "Users" {
+
+actor "Business User" as BusinessUser
+
+actor "Platform\nAdministrator" as PlatformAdmin
+
+actor "AI\nAdministrator" as AIAdmin
+
+}
+
+'==============================================================================
+' SYSTEM
+'==============================================================================
+
+package "System Under Design" {
+
+rectangle "Enterprise AI\nOrchestration Platform" as EAOP
+
+}
+
+'==============================================================================
+' EXTERNAL SYSTEMS
+'==============================================================================
+
+package "External Systems" {
+
+rectangle "Vertex AI" as VertexAI
+
+rectangle "Firebase\nAuthentication" as Firebase
+
+rectangle "Google Cloud\nStorage" as GCS
+
+rectangle "Enterprise\nKnowledge Sources" as Knowledge
+
+rectangle "Enterprise\nSystems" as Enterprise
+
+}
+
+'==============================================================================
+' RELATIONSHIPS
+'==============================================================================
+
+BusinessUser --> EAOP : Uses
+
+PlatformAdmin --> EAOP : Administers
+
+AIAdmin --> EAOP : Configures
+
+EAOP --> VertexAI : Gemini & Embeddings
+
+EAOP --> Firebase : Authentication
+
+EAOP --> GCS : Store / Retrieve Documents
+
+Knowledge --> GCS : Document Ingestion
+
+EAOP --> Enterprise : Business APIs
+
+@enduml

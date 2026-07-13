@@ -1,0 +1,130 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Business Process Map
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' KNOWLEDGE INGESTION PROCESS
+'=========================================================
+
+package "Knowledge Ingestion Process" {
+
+rectangle "Receive Enterprise Documents" as Receive
+
+rectangle "Validate Source" as Validate
+
+rectangle "Document Ingestion" as Ingestion
+
+rectangle "Content Extraction" as Extract
+
+rectangle "Metadata Extraction" as Metadata
+
+rectangle "Chunk Generation" as Chunking
+
+rectangle "Embedding Generation" as Embeddings
+
+rectangle "Store Documents\n(Google Cloud Storage)" as GCS
+
+rectangle "Store Metadata\n(Firestore)" as Firestore
+
+rectangle "Store Vectors\n(Qdrant)" as Qdrant
+
+}
+
+'=========================================================
+' AI QUERY PROCESS
+'=========================================================
+
+package "AI Assisted Knowledge Retrieval" {
+
+rectangle "Authenticate User" as Auth
+
+rectangle "Retrieve Chat Context" as Context
+
+rectangle "Generate Query Embedding" as QueryEmbedding
+
+rectangle "Hybrid Search" as Search
+
+rectangle "Metadata Filtering" as Filter
+
+rectangle "Cross Encoder Reranking" as Rerank
+
+rectangle "Build AI Context" as BuildContext
+
+rectangle "Generate Response\n(Gemini)" as Gemini
+
+rectangle "Response Validation" as ValidateResponse
+
+rectangle "Audit Logging" as Audit
+
+rectangle "Return Response" as Response
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+Receive --> Validate
+
+Validate --> Ingestion
+
+Ingestion --> Extract
+
+Extract --> Metadata
+
+Metadata --> Chunking
+
+Chunking --> Embeddings
+
+Embeddings --> GCS
+
+Embeddings --> Firestore
+
+Embeddings --> Qdrant
+
+Qdrant --> Auth
+
+Auth --> Context
+
+Context --> QueryEmbedding
+
+QueryEmbedding --> Search
+
+Search --> Filter
+
+Filter --> Rerank
+
+Rerank --> BuildContext
+
+BuildContext --> Gemini
+
+Gemini --> ValidateResponse
+
+ValidateResponse --> Audit
+
+Audit --> Response
+
+@enduml

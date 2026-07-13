@@ -1,0 +1,104 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Hybrid Search Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Business User" as User
+
+rectangle "FastAPI Backend" as API
+
+package "AI Orchestration" {
+
+    rectangle "LangGraph Runtime" as LangGraph
+
+    rectangle "Worker Agent" as Worker
+
+}
+
+package "Retrieval Pipeline" {
+
+    rectangle "Query Embedding Generator" as QueryEmbedding
+
+    rectangle "Semantic Search" as SemanticSearch
+
+    rectangle "Metadata Filter" as MetadataFilter
+
+    rectangle "Cross Encoder Reranker" as Reranker
+
+    rectangle "Context Builder" as ContextBuilder
+
+}
+
+package "Knowledge Platform" {
+
+    database "Qdrant Vector Database" as Qdrant
+
+    database "Firestore Metadata" as Firestore
+
+    database "Google Cloud Storage" as GCS
+
+}
+
+package "Vertex AI" {
+
+    rectangle "Embedding Models" as Embeddings
+
+    rectangle "Gemini Models" as Gemini
+
+}
+
+User --> API
+
+API --> LangGraph
+
+LangGraph --> Worker
+
+Worker --> QueryEmbedding
+
+QueryEmbedding --> Embeddings
+
+Embeddings --> SemanticSearch
+
+SemanticSearch --> Qdrant
+
+SemanticSearch --> Firestore
+
+SemanticSearch --> MetadataFilter
+
+MetadataFilter --> Reranker
+
+Reranker --> GCS
+
+GCS --> ContextBuilder
+
+ContextBuilder --> Gemini
+
+Gemini --> Worker
+
+Worker --> API
+
+API --> User
+
+@enduml

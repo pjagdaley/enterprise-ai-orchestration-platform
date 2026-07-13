@@ -1,0 +1,67 @@
+@startuml
+
+title Chat Session Management Sequence
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam ArrowThickness 1.5
+skinparam ParticipantBorderColor #404040
+skinparam ParticipantBackgroundColor white
+skinparam SequenceLifeLineBorderColor #404040
+skinparam SequenceLifeLineBackgroundColor white
+
+actor "Business User" as User
+
+participant "React Web Portal" as UI
+
+participant "FastAPI Backend" as API
+
+participant "Session Service" as Session
+
+database "Firestore" as Firestore
+
+participant "Prompt Builder" as Prompt
+
+participant "LangGraph Runtime" as LangGraph
+
+participant "Vertex AI" as Gemini
+
+User -> UI : Ask Question
+
+UI -> API : POST /query
+
+API -> Session : Load Session
+
+Session -> Firestore : Read Chat History
+
+Firestore --> Session : Previous Messages
+
+Session --> API : Session Context
+
+API -> Prompt : Build Prompt
+
+Prompt -> Prompt : Keep Last N Messages
+
+Prompt -> Prompt : Add User Query
+
+Prompt --> API : Final Prompt
+
+API -> LangGraph : Execute Workflow
+
+LangGraph -> Gemini : Generate Response
+
+Gemini --> LangGraph : AI Response
+
+LangGraph --> API : Response
+
+API -> Firestore : Store User Message
+
+API -> Firestore : Store Assistant Response
+
+Firestore --> API : Success
+
+API --> UI : Final Response
+
+UI --> User : Display Answer
+
+@enduml

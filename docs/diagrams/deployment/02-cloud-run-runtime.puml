@@ -1,0 +1,120 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Cloud Run Runtime Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Business User" as BusinessUser
+
+cloud "Internet" as Internet
+
+rectangle "HTTPS Load Balancer" as LoadBalancer
+
+package "Cloud Run Services" {
+
+    rectangle "React Frontend" as React
+
+    rectangle "FastAPI Backend" as API
+
+    rectangle "Authentication Service" as Auth
+
+    rectangle "Workflow Service" as Workflow
+
+    rectangle "Ingestion Service" as Ingestion
+
+}
+
+package "AI Platform" {
+
+    rectangle "LangGraph Runtime" as LangGraph
+
+    rectangle "Vertex AI Gemini" as Gemini
+
+    rectangle "Embedding Models" as Embeddings
+
+}
+
+package "Data Layer" {
+
+    database "Firestore" as Firestore
+
+    database "Google Cloud Storage" as GCS
+
+    database "Qdrant" as Qdrant
+
+}
+
+package "Platform Services" {
+
+    rectangle "Secret Manager" as SecretManager
+
+    rectangle "Cloud IAM" as CloudIAM
+
+    rectangle "Cloud Logging" as CloudLogging
+
+    rectangle "Cloud Monitoring" as CloudMonitoring
+
+}
+
+BusinessUser --> Internet
+
+Internet --> LoadBalancer
+
+LoadBalancer --> React
+
+React --> API
+
+API --> Auth
+
+API --> Workflow
+
+Workflow --> LangGraph
+
+LangGraph --> Gemini
+
+LangGraph --> Embeddings
+
+Workflow --> Firestore
+
+Workflow --> Qdrant
+
+Workflow --> GCS
+
+API --> SecretManager
+
+API --> CloudIAM
+
+API --> CloudLogging
+
+API --> CloudMonitoring
+
+Ingestion --> GCS
+
+Ingestion --> Firestore
+
+Ingestion --> Qdrant
+
+Ingestion --> Embeddings
+
+@enduml

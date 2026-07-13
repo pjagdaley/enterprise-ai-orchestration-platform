@@ -1,0 +1,102 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title CI/CD Pipeline
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+actor "Developer" as Developer
+
+package "Source Control" {
+
+    rectangle "GitHub Repository" as GitHub
+
+    rectangle "Feature Branch" as FeatureBranch
+
+    rectangle "Pull Request" as PullRequest
+
+}
+
+package "Build Pipeline" {
+
+    rectangle "GitHub Actions" as GitHubActions
+
+    rectangle "Unit Tests" as UnitTests
+
+    rectangle "Integration Tests" as IntegrationTests
+
+    rectangle "Docker Build" as DockerBuild
+
+}
+
+package "Artifact Management" {
+
+    rectangle "Artifact Registry" as ArtifactRegistry
+
+}
+
+package "Deployment" {
+
+    rectangle "Development" as Dev
+
+    rectangle "Test" as Test
+
+    rectangle "Production" as Prod
+
+}
+
+package "Runtime Platform" {
+
+    rectangle "Cloud Run" as CloudRun
+
+    rectangle "Compute Engine VM" as ComputeVM
+
+}
+
+Developer --> FeatureBranch
+
+FeatureBranch --> PullRequest
+
+PullRequest --> GitHub
+
+GitHub --> GitHubActions
+
+GitHubActions --> UnitTests
+
+UnitTests --> IntegrationTests
+
+IntegrationTests --> DockerBuild
+
+DockerBuild --> ArtifactRegistry
+
+ArtifactRegistry --> Dev
+
+Dev --> Test
+
+Test --> Prod
+
+Prod --> CloudRun
+
+Prod --> ComputeVM
+
+@enduml

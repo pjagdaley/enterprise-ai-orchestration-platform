@@ -1,0 +1,163 @@
+@startuml
+
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' Agent Runtime Architecture
+'==============================================================================
+
+!theme plain
+
+title Enterprise AI Orchestration Platform
+title AI Orchestration Runtime
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+'==============================================================================
+' ENTRY POINT
+'==============================================================================
+
+rectangle "Workflow Service" as Workflow
+
+'==============================================================================
+' LANGGRAPH
+'==============================================================================
+
+package "LangGraph Runtime" {
+
+rectangle "Planning Engine" as Planner
+
+rectangle "Supervisor Agent" as Supervisor
+
+rectangle "Worker Agent Pool" as Workers
+
+rectangle "Memory Manager" as Memory
+
+rectangle "Routing Engine" as Router
+
+rectangle "State Manager" as State
+
+}
+
+'==============================================================================
+' MCP
+'==============================================================================
+
+package "MCP Layer" {
+
+rectangle "MCP Client" as MCP
+
+rectangle "Tool Registry" as Registry
+
+}
+
+'==============================================================================
+' TOOLS
+'==============================================================================
+
+package "Enterprise Tools" {
+
+rectangle "Knowledge Search"
+
+rectangle "SAP Connector"
+
+rectangle "Salesforce Connector"
+
+rectangle "REST API Connector"
+
+rectangle "Email Tool"
+
+rectangle "Document Tool"
+
+}
+
+'==============================================================================
+' AI SERVICES
+'==============================================================================
+
+package "Vertex AI" {
+
+rectangle "Gemini"
+
+rectangle "Embedding"
+
+rectangle "Safety"
+
+}
+
+'==============================================================================
+' KNOWLEDGE
+'==============================================================================
+
+package "Knowledge Platform" {
+
+database "Qdrant"
+
+database "Firestore"
+
+database "Cloud Storage"
+
+}
+
+'==============================================================================
+' FLOW
+'==============================================================================
+
+Workflow --> Planner
+
+Planner --> Supervisor
+
+Supervisor --> Router
+
+Router --> Workers
+
+Workers --> Memory
+
+Workers --> State
+
+Workers --> Gemini
+
+Workers --> Embedding
+
+Workers --> Safety
+
+Workers --> MCP
+
+MCP --> Registry
+
+Registry --> "Knowledge Search"
+
+Registry --> "SAP Connector"
+
+Registry --> "Salesforce Connector"
+
+Registry --> "REST API Connector"
+
+Registry --> "Email Tool"
+
+Registry --> "Document Tool"
+
+Workers --> Qdrant
+
+Workers --> Firestore
+
+Workers --> "Cloud Storage"
+
+@enduml

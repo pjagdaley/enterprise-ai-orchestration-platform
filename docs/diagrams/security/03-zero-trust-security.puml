@@ -1,0 +1,162 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Zero Trust Security Architecture
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' USERS
+'=========================================================
+
+package "Users" {
+
+actor "Business User" as User
+
+actor "Platform Administrator" as Admin
+
+actor "AI Administrator" as AIAdmin
+
+}
+
+'=========================================================
+' IDENTITY
+'=========================================================
+
+package "Identity Verification" {
+
+rectangle "Firebase Authentication" as Firebase
+
+rectangle "JWT Token Validation" as JWT
+
+rectangle "Role Based Access Control" as RBAC
+
+}
+
+'=========================================================
+' SECURITY ENFORCEMENT
+'=========================================================
+
+package "Security Enforcement" {
+
+rectangle "API Gateway" as Gateway
+
+rectangle "FastAPI Security Middleware" as Security
+
+rectangle "Authorization Policies" as Policy
+
+rectangle "Cloud IAM" as IAM
+
+}
+
+'=========================================================
+' PLATFORM
+'=========================================================
+
+package "Enterprise AI Platform" {
+
+rectangle "FastAPI Backend" as API
+
+rectangle "LangGraph Runtime" as LangGraph
+
+rectangle "Vertex AI" as Vertex
+
+database "Firestore" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+database "Qdrant" as Qdrant
+
+}
+
+'=========================================================
+' MONITORING
+'=========================================================
+
+package "Security Monitoring" {
+
+rectangle "Cloud Logging" as Logging
+
+rectangle "Cloud Monitoring" as Monitoring
+
+rectangle "Audit Logs" as Audit
+
+}
+
+'=========================================================
+' AUTHENTICATION FLOW
+'=========================================================
+
+User --> Firebase
+
+Admin --> Firebase
+
+AIAdmin --> Firebase
+
+Firebase --> JWT
+
+JWT --> Gateway
+
+Gateway --> Security
+
+Security --> RBAC
+
+RBAC --> Policy
+
+Policy --> IAM
+
+IAM --> API
+
+'=========================================================
+' SERVICE ACCESS
+'=========================================================
+
+API --> LangGraph
+
+LangGraph --> Vertex
+
+API --> Firestore
+
+API --> GCS
+
+API --> Qdrant
+
+'=========================================================
+' AUDIT
+'=========================================================
+
+Gateway --> Logging
+
+Security --> Audit
+
+API --> Monitoring
+
+Vertex --> Logging
+
+Firestore --> Logging
+
+GCS --> Logging
+
+Qdrant --> Logging
+
+@enduml

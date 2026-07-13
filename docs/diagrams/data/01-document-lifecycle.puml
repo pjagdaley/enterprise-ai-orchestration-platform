@@ -1,0 +1,112 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Document Lifecycle
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+package "Enterprise Sources" {
+
+rectangle "SharePoint" as SharePoint
+
+rectangle "Google Drive" as GoogleDrive
+
+rectangle "GitHub" as GitHub
+
+rectangle "SAP" as SAP
+
+rectangle "Salesforce" as Salesforce
+
+rectangle "REST APIs" as RestAPI
+
+}
+
+package "Document Processing" {
+
+rectangle "Document Ingestion" as Ingestion
+
+rectangle "Parser" as Parser
+
+rectangle "Metadata Extraction" as Metadata
+
+rectangle "Chunking Engine" as Chunker
+
+rectangle "Embedding Generator" as Embeddings
+
+}
+
+package "Knowledge Repository" {
+
+database "Google Cloud Storage" as GCS
+
+database "Firestore Metadata" as Firestore
+
+database "Qdrant Vector Store" as Qdrant
+
+}
+
+package "Query Pipeline" {
+
+rectangle "Hybrid Search" as Search
+
+rectangle "Reranker" as Reranker
+
+rectangle "Context Builder" as ContextBuilder
+
+}
+
+SharePoint --> Ingestion
+
+GoogleDrive --> Ingestion
+
+GitHub --> Ingestion
+
+SAP --> Ingestion
+
+Salesforce --> Ingestion
+
+RestAPI --> Ingestion
+
+Ingestion --> Parser
+
+Parser --> Metadata
+
+Metadata --> Chunker
+
+Chunker --> Embeddings
+
+Parser --> GCS
+
+Metadata --> Firestore
+
+Embeddings --> Qdrant
+
+Qdrant --> Search
+
+Firestore --> Search
+
+Search --> Reranker
+
+Reranker --> ContextBuilder
+
+@enduml

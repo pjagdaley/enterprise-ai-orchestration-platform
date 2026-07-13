@@ -1,0 +1,231 @@
+@startuml
+
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' Container Architecture
+'==============================================================================
+
+!theme plain
+
+title Enterprise AI Orchestration Platform
+title C4 Level 2 - Container Architecture
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #404040
+
+'==============================================================================
+' USERS
+'==============================================================================
+
+package "Users" {
+
+actor "Business User" as BusinessUser
+
+actor "Platform Admin" as PlatformAdmin
+
+actor "AI Admin" as AIAdmin
+
+}
+
+'==============================================================================
+' PRESENTATION
+'==============================================================================
+
+package "Presentation Layer" {
+
+rectangle "React Web Portal" as React
+
+rectangle "Business Chat UI" as Chat
+
+rectangle "Administration Portal" as AdminPortal
+
+}
+
+'==============================================================================
+' APPLICATION
+'==============================================================================
+
+package "Application Layer" {
+
+rectangle "FastAPI Backend" as API
+
+rectangle "Authentication Service" as Auth
+
+rectangle "Workflow Service" as Workflow
+
+}
+
+'==============================================================================
+' AI ORCHESTRATION
+'==============================================================================
+
+package "AI Orchestration" {
+
+rectangle "LangGraph Runtime" as LangGraph
+
+rectangle "Planner Agent" as Planner
+
+rectangle "Supervisor Agent" as Supervisor
+
+rectangle "Worker Agents" as Workers
+
+rectangle "MCP Client" as MCP
+
+}
+
+'==============================================================================
+' AI SERVICES
+'==============================================================================
+
+package "Vertex AI Services" {
+
+rectangle "Gemini Models" as Gemini
+
+rectangle "Embedding Models" as Embeddings
+
+rectangle "Safety & Grounding" as Safety
+
+}
+
+'==============================================================================
+' KNOWLEDGE PLATFORM
+'==============================================================================
+
+package "Enterprise Knowledge Platform" {
+
+database "Qdrant\nVector Database" as Qdrant
+
+database "Firestore\nMetadata Store" as Firestore
+
+database "Google Cloud Storage" as GCS
+
+}
+
+'==============================================================================
+' PLATFORM SERVICES
+'==============================================================================
+
+package "Platform Services" {
+
+rectangle "IAM" as IAM
+
+rectangle "Secret Manager" as Secrets
+
+rectangle "Cloud Logging" as Logging
+
+rectangle "Cloud Monitoring" as Monitoring
+
+}
+
+'==============================================================================
+' EXTERNAL SYSTEMS
+'==============================================================================
+
+package "Enterprise Systems" {
+
+rectangle "SharePoint" as SharePoint
+
+rectangle "Google Drive" as Drive
+
+rectangle "GitHub" as GitHub
+
+rectangle "SAP" as SAP
+
+rectangle "Salesforce" as Salesforce
+
+rectangle "REST APIs" as APIs
+
+}
+
+'==============================================================================
+' USER FLOW
+'==============================================================================
+
+BusinessUser --> Chat
+
+PlatformAdmin --> AdminPortal
+
+AIAdmin --> AdminPortal
+
+Chat --> React
+
+AdminPortal --> React
+
+React --> API
+
+API --> Auth
+
+API --> Workflow
+
+Workflow --> LangGraph
+
+'==============================================================================
+' AGENT FLOW
+'==============================================================================
+
+LangGraph --> Planner
+
+LangGraph --> Supervisor
+
+LangGraph --> Workers
+
+Supervisor --> MCP
+
+Workers --> Gemini
+
+Workers --> Embeddings
+
+Workers --> Safety
+
+Workers --> Qdrant
+
+Workers --> Firestore
+
+Workers --> GCS
+
+'==============================================================================
+' PLATFORM
+'==============================================================================
+
+API --> IAM
+
+API --> Secrets
+
+API --> Logging
+
+API --> Monitoring
+
+'==============================================================================
+' ENTERPRISE
+'==============================================================================
+
+SharePoint --> GCS
+
+Drive --> GCS
+
+GitHub --> GCS
+
+SAP --> API
+
+Salesforce --> API
+
+APIs --> API
+
+@enduml

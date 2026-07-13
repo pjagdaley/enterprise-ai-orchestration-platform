@@ -1,0 +1,132 @@
+@startuml
+
+title Enterprise AI Orchestration Platform
+title Domain-Driven Design (DDD)
+
+!theme plain
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+
+skinparam PackageBorderColor #404040
+skinparam PackageBorderThickness 2
+
+skinparam RectangleBorderColor #404040
+skinparam RectangleBorderThickness 1.5
+skinparam RectangleRoundCorner 10
+
+skinparam ArrowColor #404040
+skinparam ArrowThickness 1.5
+
+'=========================================================
+' CORE DOMAIN
+'=========================================================
+
+package "Core Domain" {
+
+rectangle "Knowledge Management" as Knowledge
+
+rectangle "Enterprise Search" as Search
+
+rectangle "Agent Orchestration" as Agents
+
+rectangle "Conversational AI" as Chat
+
+}
+
+'=========================================================
+' SUPPORTING DOMAIN
+'=========================================================
+
+package "Supporting Domain" {
+
+rectangle "Enterprise Integration" as Integration
+
+rectangle "Workflow Engine" as Workflow
+
+rectangle "Metadata Management" as Metadata
+
+rectangle "Notification Service" as Notification
+
+}
+
+'=========================================================
+' GENERIC DOMAIN
+'=========================================================
+
+package "Generic Domain" {
+
+rectangle "Authentication" as Auth
+
+rectangle "Authorization" as IAM
+
+rectangle "Logging" as Logging
+
+rectangle "Monitoring" as Monitoring
+
+rectangle "Configuration" as Config
+
+rectangle "Secret Management" as Secrets
+
+}
+
+'=========================================================
+' INFRASTRUCTURE
+'=========================================================
+
+package "Infrastructure" {
+
+database "Google Cloud Storage" as GCS
+
+database "Firestore" as Firestore
+
+database "Qdrant" as Qdrant
+
+rectangle "Vertex AI" as Vertex
+
+}
+
+'=========================================================
+' RELATIONSHIPS
+'=========================================================
+
+Knowledge --> Search
+
+Search --> Agents
+
+Agents --> Chat
+
+Knowledge --> Metadata
+
+Agents --> Workflow
+
+Workflow --> Integration
+
+Knowledge --> GCS
+
+Metadata --> Firestore
+
+Search --> Qdrant
+
+Agents --> Vertex
+
+Chat --> Auth
+
+Auth --> IAM
+
+Knowledge --> Logging
+
+Agents --> Monitoring
+
+Integration --> Secrets
+
+Config --> Workflow
+
+@enduml
