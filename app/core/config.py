@@ -94,10 +94,36 @@ class Settings(BaseSettings):
     # ==========================================================
     log_level: str = "INFO"
 
+    log_dir: str = "logs"
+
+    log_file: str = "application.log"
+    
     # ==========================================================
     # API
     # ==========================================================
     request_timeout: int = 120
+
+    # ==========================================================
+    # CORS
+    # ==========================================================
+
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+    ]
+
+    cors_allow_credentials: bool = True
+
+    cors_allow_methods: list[str] = ["*"]
+
+    cors_allow_headers: list[str] = ["*"]
+
+    # ==========================================================
+    # GZip Compression
+    # ==========================================================
+
+    gzip_enabled: bool = True
+
+    gzip_minimum_size: int = 1000
 
     # ==========================================================
     # Security (Future)
@@ -107,6 +133,18 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
 
     jwt_expiry_minutes: int = 60
+
+   # ==========================================================
+    # LLM
+    # ==========================================================
+
+    llm_provider: str = "mock"
+
+    gemini_model: str = "gemini-2.5-flash"
+
+    vertex_ai_location: str = "us-central1"
+
+    project_id: str
 
 
 @lru_cache
