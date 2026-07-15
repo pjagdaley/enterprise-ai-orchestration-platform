@@ -146,6 +146,30 @@ class Settings(BaseSettings):
 
     project_id: str
 
+    # ==========================================================
+    # Chunking
+    # ==========================================================
+
+    chunk_size: int = 1500
+
+    chunk_overlap: int = 300
+
+    # ==========================================================
+    # Embeddings
+    # ==========================================================
+
+    embedding_model: str = "text-embedding-005"
+
+    # ==========================================================
+    # Qdrant
+    # ==========================================================
+
+    qdrant_host: str = "localhost"
+
+    qdrant_port: int = 6333
+
+    qdrant_collection: str = "enterprise_documents"
+
 
 @lru_cache
 def get_settings() -> Settings:
