@@ -170,6 +170,12 @@ class Settings(BaseSettings):
 
     qdrant_collection: str = "enterprise_documents"
 
+    # ==========================================================
+    # Firestore
+    # ==========================================================
+
+    firebase_credentials_path: str
+
 
 @lru_cache
 def get_settings() -> Settings:

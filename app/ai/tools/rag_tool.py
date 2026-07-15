@@ -14,6 +14,8 @@ from app.rag.models import SearchRequest
 from app.rag.retrieval.reranker import Reranker
 from app.rag.retrieval.search_service import SearchService
 
+from app.rag.prompt_builder import PromptBuilder
+
 
 class RAGTool(BaseTool):
     """
@@ -35,6 +37,8 @@ class RAGTool(BaseTool):
         self._reranker = Reranker()
 
         self._llm = LLMFactory.create()
+
+        self._prompt_builder = PromptBuilder()
 
     async def execute(
         self,
@@ -76,21 +80,10 @@ class RAGTool(BaseTool):
         #
         # Build prompt
         #
-
-        prompt = f"""
-Answer the user's question using ONLY the provided context.
-
-If the answer cannot be found in the context,
-reply with:
-
-"I could not find relevant information."
-
-Context:
-{context}
-
-Question:
-{request.input}
-"""
+        prompt = self._prompt_builder.build_rag_prompt(
+            question=request.input,
+            context=context,
+        )    
 
         #
         # Generate answer
