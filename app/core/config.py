@@ -176,6 +176,12 @@ class Settings(BaseSettings):
 
     firebase_credentials_path: str
 
+   # ==========================================================
+    # GCS Bucket
+    # ==========================================================
+
+    gcs_bucket: str
+
 
 @lru_cache
 def get_settings() -> Settings:

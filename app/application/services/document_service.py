@@ -2,18 +2,17 @@
 Document application service.
 """
 
-import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import HTTPException
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
 from starlette import status
 
 from app.domain.enums.source_type import DocumentSourceType
 from app.domain.enums.document_status import DocumentStatus
 from app.infrastructure.firestore.firestore_service import FirestoreService
+from app.infrastructure.storage.gcs_storage import GCSStorage
 from app.rag.ingestion.ingest_service import IngestService
 from app.schemas.document import DocumentUploadResponse
 from app.schemas.firestore import DocumentMetadata
@@ -33,18 +32,12 @@ class DocumentService:
     }
 
     def __init__(self) -> None:
-        """
-        Initialize the document service.
-        """
+
+        self._storage = GCSStorage()
 
         self._ingest_service = IngestService()
-        self._firestore_service = FirestoreService()
 
-        self._upload_dir = Path("uploads")
-        self._upload_dir.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
+        self._firestore_service = FirestoreService()
 
     async def upload_document(
         self,
@@ -55,41 +48,38 @@ class DocumentService:
         """
 
         #
-        # Validate file extension
+        # Validate extension
         #
 
         extension = Path(file.filename).suffix.lower()
 
         if extension not in self.ALLOWED_EXTENSIONS:
+
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Unsupported file type: {extension}",
             )
 
         #
-        # Save uploaded file
+        # Upload to Google Cloud Storage
         #
 
-        destination = self._upload_dir / file.filename
-
-        with destination.open("wb") as buffer:
-            shutil.copyfileobj(
-                file.file,
-                buffer,
-            )
+        storage_path = await self._storage.upload(
+            file
+        )
 
         #
-        # Create Firestore metadata
+        # Create metadata
         #
 
         metadata = DocumentMetadata(
             document_id=str(uuid.uuid4()),
-            source_path=str(destination),
+            source_path=storage_path,
             generation="1",
             extension=extension,
             content_type=file.content_type
             or "application/octet-stream",
-            source_type=DocumentSourceType.LOCAL,
+            source_type=DocumentSourceType.GCS,
             status=DocumentStatus.PROCESSING,
             chunk_count=0,
             created_at=datetime.utcnow(),
@@ -97,25 +87,24 @@ class DocumentService:
             last_error=None,
         )
 
-        await self._firestore_service.save_document(metadata)
+        await self._firestore_service.save_document(
+            metadata
+        )
 
         try:
+
             #
-            # Ingest document
+            # Ingest from GCS
             #
 
             chunk_count = await self._ingest_service.ingest(
-                str(destination)
+                storage_path
             )
 
-            print(f"Chunks created: {chunk_count}")
-
-            #
-            # Update Firestore metadata
-            #
-
             metadata.chunk_count = chunk_count
+
             metadata.status = DocumentStatus.SUCCESS
+
             metadata.updated_at = datetime.utcnow()
 
             await self._firestore_service.update_document(
@@ -131,7 +120,9 @@ class DocumentService:
         except Exception as ex:
 
             metadata.status = DocumentStatus.FAILED
+
             metadata.last_error = str(ex)
+
             metadata.updated_at = datetime.utcnow()
 
             await self._firestore_service.update_document(
@@ -143,13 +134,9 @@ class DocumentService:
                 detail=str(ex),
             ) from ex
 
-
     async def list_documents(
         self,
     ) -> list[DocumentMetadata]:
-        """
-        Return all indexed documents.
-        """
 
         return await self._firestore_service.list_documents()
 
@@ -157,9 +144,6 @@ class DocumentService:
         self,
         document_id: str,
     ) -> DocumentMetadata | None:
-        """
-        Return a document by id.
-        """
 
         return await self._firestore_service.get_document(
             document_id
@@ -169,15 +153,7 @@ class DocumentService:
         self,
         document_id: str,
     ) -> None:
-        """
-        Delete a document.
-
-        NOTE:
-        Currently this removes only Firestore metadata.
-        Qdrant vectors and uploaded files will be deleted
-        in a later phase.
-        """
 
         await self._firestore_service.delete_document(
             document_id
-        )    
+        )

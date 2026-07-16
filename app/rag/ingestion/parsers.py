@@ -1,162 +1,309 @@
 """
-Document parsers.
+Document parser for Enterprise AI Platform.
 
-Responsible for extracting text from supported document formats.
+Google Cloud Storage is the single source of truth.
 """
 
 import json
 from io import BytesIO
 from pathlib import Path
 
+from docx import Document
+from google.cloud import storage
 from openpyxl import load_workbook
 from pypdf import PdfReader
-from docx import Document
 
 
 class DocumentParser:
     """
-    Extract text from supported document types.
+    Parses enterprise documents stored in Google Cloud Storage.
     """
+
+    def __init__(self) -> None:
+
+        self._storage_client = storage.Client()
 
     def parse(
         self,
-        file_path: str,
+        source_path: str,
     ) -> str:
         """
-        Parse a document and return extracted text.
+        Parse a document from Google Cloud Storage.
 
         Args:
-            file_path:
-                Path to the document.
+            gcs_uri:
+                gs://bucket/file.pdf
 
         Returns:
             Extracted text.
         """
 
-        extension = Path(file_path).suffix.lower()
+        file_bytes, extension = self._download_from_gcs(
+            source_path
+        )
 
         if extension == ".pdf":
-            return self._parse_pdf(file_path)
+            return self._extract_pdf(file_bytes)
 
-        if extension == ".docx":
-            return self._parse_docx(file_path)
+        elif extension == ".txt":
+            return self._extract_txt(file_bytes)
 
-        if extension == ".txt":
-            return self._parse_txt(file_path)
+        elif extension == ".docx":
+            return self._extract_docx(file_bytes)
 
-        if extension == ".json":
-            return self._parse_json(file_path)
+        elif extension == ".xlsx":
+            return self._extract_xlsx(file_bytes)
 
-        if extension == ".xlsx":
-            return self._parse_xlsx(file_path)
+        elif extension == ".json":
+            return self._extract_json(file_bytes)
 
         raise ValueError(
             f"Unsupported file type: {extension}"
         )
 
-    def _parse_pdf(
+    def _download_from_gcs(
         self,
-        file_path: str,
+        source_path: str,
+    ) -> tuple[bytes, str]:
+        """
+        Download a document from Google Cloud Storage.
+        """
+
+        path = source_path.replace(
+            "gs://",
+            "",
+        )
+
+        bucket_name, blob_name = path.split(
+            "/",
+            1,
+        )
+
+        bucket = self._storage_client.bucket(
+            bucket_name
+        )
+
+        blob = bucket.blob(
+            blob_name
+        )
+
+        file_bytes = blob.download_as_bytes()
+
+        extension = Path(
+            blob_name
+        ).suffix.lower()
+
+        return file_bytes, extension
+
+    def _extract_pdf(
+        self,
+        file_bytes: bytes,
     ) -> str:
         """
         Extract text from PDF.
         """
 
-        reader = PdfReader(file_path)
+        reader = PdfReader(
+            BytesIO(file_bytes)
+        )
 
-        text = []
+        text = ""
 
         for page in reader.pages:
 
             page_text = page.extract_text()
 
             if page_text:
-                text.append(page_text)
+                text += page_text + "\n"
 
-        return "\n".join(text)
+        return text
 
-    def _parse_docx(
+    def _extract_txt(
         self,
-        file_path: str,
+        file_bytes: bytes,
     ) -> str:
         """
-        Extract text from Word document.
+        Extract text from TXT.
         """
 
-        document = Document(file_path)
+        return file_bytes.decode(
+            "utf-8",
+            errors="ignore",
+        )
+    
+    def _extract_docx(
+        self,
+        file_bytes: bytes,
+    ) -> str:
+        """
+        Extract text from DOCX.
+        """
 
-        return "\n".join(
-            paragraph.text
-            for paragraph in document.paragraphs
+        document = Document(
+            BytesIO(file_bytes)
         )
 
-    def _parse_txt(
+        texts = []
+
+        #
+        # Paragraphs
+        #
+
+        for paragraph in document.paragraphs:
+
+            if paragraph.text.strip():
+
+                texts.append(
+                    paragraph.text
+                )
+
+        #
+        # Tables
+        #
+
+        for table in document.tables:
+
+            for row in table.rows:
+
+                row_text = " | ".join(
+                    cell.text.strip()
+                    for cell in row.cells
+                )
+
+                texts.append(
+                    row_text
+                )
+
+        return "\n".join(texts)
+
+    def _extract_xlsx(
         self,
-        file_path: str,
+        file_bytes: bytes,
     ) -> str:
         """
-        Extract text from a text file.
-        """
-
-        with open(
-            file_path,
-            "r",
-            encoding="utf-8",
-        ) as file:
-
-            return file.read()
-
-    def _parse_json(
-        self,
-        file_path: str,
-    ) -> str:
-        """
-        Convert JSON into formatted text.
-        """
-
-        with open(
-            file_path,
-            "r",
-            encoding="utf-8",
-        ) as file:
-
-            data = json.load(file)
-
-        return json.dumps(
-            data,
-            indent=2,
-        )
-
-    def _parse_xlsx(
-        self,
-        file_path: str,
-    ) -> str:
-        """
-        Extract text from an Excel workbook.
+        Extract text from Excel.
         """
 
         workbook = load_workbook(
-            filename=file_path,
+            BytesIO(file_bytes),
             data_only=True,
         )
 
-        rows = []
+        text_parts = []
 
         for sheet in workbook.worksheets:
 
-            rows.append(f"Sheet: {sheet.title}")
+            text_parts.append(
+                f"\n=== Sheet: {sheet.title} ===\n"
+            )
 
-            for row in sheet.iter_rows(values_only=True):
+            rows = list(
+                sheet.iter_rows(
+                    values_only=True
+                )
+            )
 
-                values = [
-                    str(cell)
-                    for cell in row
-                    if cell is not None
-                ]
+            if not rows:
+                continue
 
-                if values:
-                    rows.append(
-                        " | ".join(values)
+            headers = [
+                str(header).strip()
+                if header is not None
+                else f"Column_{index}"
+                for index, header in enumerate(
+                    rows[0],
+                    start=1,
+                )
+            ]
+
+            for row in rows[1:]:
+
+                row_lines = []
+
+                for header, value in zip(
+                    headers,
+                    row,
+                ):
+
+                    if value is not None:
+
+                        row_lines.append(
+                            f"{header}: {value}"
+                        )
+
+                if row_lines:
+
+                    text_parts.append(
+                        "\n".join(row_lines)
                     )
 
-        return "\n".join(rows)
+                    text_parts.append(
+                        "\n--------------------\n"
+                    )
+
+        return "\n".join(text_parts)
+
+    def _extract_json(
+        self,
+        file_bytes: bytes,
+    ) -> str:
+        """
+        Extract text from JSON.
+        """
+
+        data = json.loads(
+            file_bytes.decode(
+                "utf-8"
+            )
+        )
+
+        return "\n".join(
+            self._flatten_json(data)
+        )
+
+    def _flatten_json(
+        self,
+        obj,
+        prefix: str = "",
+    ) -> list[str]:
+        """
+        Flatten nested JSON.
+        """
+
+        lines = []
+
+        if isinstance(obj, dict):
+
+            for key, value in obj.items():
+
+                new_prefix = (
+                    f"{prefix}.{key}"
+                    if prefix
+                    else key
+                )
+
+                lines.extend(
+                    self._flatten_json(
+                        value,
+                        new_prefix,
+                    )
+                )
+
+        elif isinstance(obj, list):
+
+            for index, item in enumerate(obj):
+
+                lines.extend(
+                    self._flatten_json(
+                        item,
+                        f"{prefix}[{index}]",
+                    )
+                )
+
+        else:
+
+            lines.append(
+                f"{prefix}: {obj}"
+            )
+
+        return lines 

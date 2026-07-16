@@ -13,6 +13,7 @@ __pycache__/
 build/
 dist/
 downloads/
+uploads/
 eggs/
 .eggs/
 lib/
