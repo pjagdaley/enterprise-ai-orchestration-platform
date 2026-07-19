@@ -10,11 +10,11 @@ class ChatService:
     Service responsible for processing chat requests.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, workflow: WorkflowGraph,) -> None:
         """
         Initialize the chat service.
         """
-        self._workflow = WorkflowGraph()
+        self._workflow = workflow
 
     async def chat(
         self,

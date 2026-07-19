@@ -6,6 +6,9 @@ from app.ai.tools.base_tool import BaseTool
 from app.ai.tools.calculator_tool import CalculatorTool
 from app.ai.tools.rag_tool import RAGTool
 
+from app.ai.mcp.service import MCPService
+from app.ai.tools.mcp_tool import MCPTool
+
 
 class ToolRegistry:
     """
@@ -57,11 +60,4 @@ class ToolRegistry:
         """
 
         return sorted(self._tools.keys())
-    
-    def register_all(self) -> None:
-        """
-        Register all built-in tools.
-        """        
-
-        self.register(CalculatorTool())
-        self.register(RAGTool())
+        

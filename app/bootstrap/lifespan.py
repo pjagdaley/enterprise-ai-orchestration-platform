@@ -13,6 +13,8 @@ from app.core.logging.logger import get_logger
 
 from app.bootstrap.settings_validation import validate_settings
 
+from app.bootstrap.services import ApplicationServices
+
 logger = get_logger(__name__)
 
 
@@ -41,6 +43,11 @@ async def lifespan(app: FastAPI):
     # initialize_mcp()
     # initialize_tool_registry()
 
+    services = ApplicationServices()
+    await services.initialize()
+
+    app.state.services = services
+
     yield
 
     #
@@ -56,3 +63,4 @@ async def lifespan(app: FastAPI):
     # close_firestore()
     # close_qdrant()
     # close_scheduler()
+    await services.shutdown()

@@ -10,6 +10,8 @@ from app.infrastructure.vertexai.embedding_service import EmbeddingService
 from app.rag.ingestion.chunker import DocumentChunker
 from app.rag.ingestion.parsers import DocumentParser
 
+from app.retrieval.lexical.opensearch_service import OpenSearchService
+
 
 class IngestService:
     """
@@ -26,6 +28,8 @@ class IngestService:
         self._embedding_service = EmbeddingService()
 
         self._qdrant = QdrantService()
+
+        self._opensearch = OpenSearchService()
 
     async def ingest(
         self,
@@ -56,7 +60,7 @@ class IngestService:
 
         chunks = self._chunker.chunk_document(
             document_id=document_id,
-            source=Path(file_path).name,
+            source=file_path,
             text=text,
         )
 
@@ -73,6 +77,16 @@ class IngestService:
             await self._qdrant.upsert(
                 chunk=chunk,
                 embedding=embedding,
+            )
+
+            self._opensearch.index_document(
+                {
+                    "chunk_id": chunk.chunk_id,
+                    "document_id": chunk.document_id,
+                    "source_path": chunk.source,
+                    "extension": Path(chunk.source).suffix.lower(),
+                    "content": chunk.content,
+                }
             )
 
         return len(chunks)

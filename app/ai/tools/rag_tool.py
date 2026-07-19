@@ -11,7 +11,7 @@ from app.ai.tools.base_tool import BaseTool
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
 from app.rag.models import SearchRequest
-from app.rag.retrieval.reranker import Reranker
+from app.retrieval.reranker.reranker import Reranker
 from app.rag.retrieval.search_service import SearchService
 
 from app.rag.prompt_builder import PromptBuilder

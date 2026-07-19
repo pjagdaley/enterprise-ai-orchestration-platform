@@ -5,6 +5,7 @@ Chat API endpoints.
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import status
+from fastapi import Request
 
 from app.application.services.chat_service import ChatService
 from app.schemas.chat import ChatRequest
@@ -16,11 +17,11 @@ router = APIRouter(
 )
 
 
-def get_chat_service() -> ChatService:
-    """
-    Return the chat service.
-    """
-    return ChatService()
+def get_chat_service(
+    request: Request,
+) -> ChatService:
+
+    return request.app.state.services.chat_service
 
 
 @router.post(

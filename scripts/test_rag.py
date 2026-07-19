@@ -22,7 +22,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from app.ai.llm.factory import LLMFactory
 from app.ai.llm.models import LLMRequest
 from app.rag.models import SearchRequest
-from app.rag.retrieval.reranker import Reranker
+from app.retrieval.reranker.reranker import Reranker
 from app.rag.retrieval.search_service import SearchService
 
 

@@ -1,54 +1,32 @@
 """
-Semantic search service.
+Hybrid search service.
 """
 
-from app.infrastructure.qdrant.qdrant_service import QdrantService
-from app.infrastructure.vertexai.embedding_service import EmbeddingService
 from app.rag.models import DocumentChunk
 from app.rag.models import SearchRequest
 from app.rag.models import SearchResult
+from app.retrieval.hybrid.hybrid_retriever import HybridRetriever
 
 
 class SearchService:
     """
-    Service responsible for semantic search.
+    Service responsible for hybrid retrieval.
     """
 
     def __init__(self) -> None:
 
-        self._embedding_service = EmbeddingService()
-
-        self._qdrant = QdrantService()
+        self._hybrid = HybridRetriever()
 
     async def search(
         self,
         request: SearchRequest,
     ) -> list[SearchResult]:
         """
-        Perform semantic search.
-
-        Args:
-            request:
-                Search request.
-
-        Returns:
-            Search results.
+        Perform hybrid retrieval.
         """
 
-        #
-        # Embed query
-        #
-
-        embedding = await self._embedding_service.embed_query(
-            request.query
-        )
-
-        #
-        # Search Qdrant
-        #
-
-        hits = await self._qdrant.search(
-            embedding=embedding,
+        hits = await self._hybrid.search(
+            query=request.query,
             top_k=request.top_k,
         )
 
@@ -56,15 +34,13 @@ class SearchService:
 
         for hit in hits:
 
-            payload = hit.payload
-
             chunk = DocumentChunk(
-                document_id=payload["document_id"],
-                chunk_id=str(hit.id),
-                content=payload["content"],
-                source=payload["source"],
-                page_number=payload.get("page_number"),
-                metadata=payload.get("metadata", {}),
+                document_id=hit.document_id,
+                chunk_id=hit.chunk_id,
+                content=hit.content,
+                source=hit.source_path,
+                page_number=None,
+                metadata={},
             )
 
             results.append(

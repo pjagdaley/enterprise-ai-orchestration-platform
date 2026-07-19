@@ -1,6 +1,7 @@
 """
 Qdrant vector database service.
 """
+from pathlib import Path
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance
@@ -65,11 +66,11 @@ class QdrantService:
                     id=chunk.chunk_id,
                     vector=embedding,
                     payload={
+                        "chunk_id": chunk.chunk_id,
                         "document_id": chunk.document_id,
-                        "source": chunk.source,
+                        "source_path": chunk.source,
+                        "extension": Path(chunk.source).suffix.lower(),
                         "content": chunk.content,
-                        "page_number": chunk.page_number,
-                        "metadata": chunk.metadata,
                     },
                 )
             ],

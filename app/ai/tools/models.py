@@ -26,9 +26,6 @@ class ToolRequest(BaseModel):
 
 
 class ToolResponse(BaseModel):
-    """
-    Response returned by a tool.
-    """
 
     model_config = ConfigDict(extra="forbid")
 
@@ -37,7 +34,12 @@ class ToolResponse(BaseModel):
         description="Whether the tool executed successfully."
     )
 
-    result: str = Field(
+    result: Any = Field(
         ...,
         description="Tool execution result."
     )
+
+    error: str | None = Field(
+        default=None,
+        description="Error message if execution failed."
+    )   

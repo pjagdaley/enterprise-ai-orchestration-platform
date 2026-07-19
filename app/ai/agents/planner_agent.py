@@ -6,6 +6,8 @@ Determines how a user request should be processed.
 
 import re
 
+from app.ai.agents.models import PlannerResponse
+
 
 class PlannerAgent:
     """
@@ -15,16 +17,13 @@ class PlannerAgent:
     def plan(
         self,
         user_input: str,
-    ) -> str:
+    ) -> PlannerResponse:
         """
-        Determine which component should handle the request.
+        Determine which tool should handle the request.
+        """
 
-        Returns:
-            calculator
-            llm
-            rag (future)
-            mcp (future)
-        """
+        user_input = user_input.strip()
+        lower_input = user_input.lower()
 
         #
         # Calculator
@@ -34,23 +33,61 @@ class PlannerAgent:
             r"[0-9+\-*/().\s]+",
             user_input,
         ):
-            return "calculator"
+            return PlannerResponse(
+                tool="calculator",
+                input=user_input,
+            )
 
         #
-        # Future RAG
-        #
-        return "rag"
-
-        # if ...
-
-        #
-        # Future MCP
+        # MCP - Read file
         #
 
-        # if ...
+        if lower_input.startswith("read "):
+            path = user_input[5:].strip()
+
+            return PlannerResponse(
+                tool="mcp",
+                input="read_text_file",
+                parameters={
+                    "path": path,
+                },
+            )
 
         #
-        # Default
+        # MCP - List directory
         #
 
-        #return "llm"
+        if lower_input.startswith("list "):
+            path = user_input[5:].strip()
+
+            return PlannerResponse(
+                tool="mcp",
+                input="list_directory",
+                parameters={
+                    "path": path,
+                },
+            )
+
+        #
+        # MCP - Create directory
+        #
+
+        if lower_input.startswith("mkdir "):
+            path = user_input[6:].strip()
+
+            return PlannerResponse(
+                tool="mcp",
+                input="create_directory",
+                parameters={
+                    "path": path,
+                },
+            )
+
+        #
+        # Default -> RAG
+        #
+
+        return PlannerResponse(
+            tool="rag",
+            input=user_input,
+        )
