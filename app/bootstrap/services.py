@@ -5,12 +5,13 @@ Responsible for creating, initializing, and shutting down
 shared application services.
 """
 
+from app.ai.agents.calculator_agent import CalculatorAgent
+from app.ai.agents.mcp_agent import MCPAgent
+from app.ai.agents.rag_agent import RAGAgent
+from app.ai.agents.registry import AgentRegistry
 from app.ai.mcp.service import MCPService
 from app.ai.orchestrator.graph import WorkflowGraph
-from app.ai.tools.calculator_tool import CalculatorTool
 from app.ai.tools.mcp_tool import MCPTool
-from app.ai.tools.rag_tool import RAGTool
-from app.ai.tools.registry import ToolRegistry
 from app.application.services.chat_service import ChatService
 
 
@@ -21,7 +22,9 @@ class ApplicationServices:
 
     def __init__(self) -> None:
         self.mcp_service: MCPService | None = None
-        self.tool_registry: ToolRegistry | None = None
+        self.agent_registry: AgentRegistry | None = None
+        self.workflow: WorkflowGraph | None = None
+        self.chat_service: ChatService | None = None
 
     async def initialize(self) -> None:
         """
@@ -42,20 +45,34 @@ class ApplicationServices:
         await self.mcp_service.initialize()
 
         #
-        # Tool Registry
+        # Agent Registry
         #
-        self.tool_registry = ToolRegistry()
+        self.agent_registry = AgentRegistry()
 
-        self.tool_registry.register(CalculatorTool())
-        self.tool_registry.register(RAGTool())
-        self.tool_registry.register(
-            MCPTool(self.mcp_service)
+        self.agent_registry.register(
+            RAGAgent()
         )
 
+        self.agent_registry.register(
+            CalculatorAgent()
+        )
+
+        self.agent_registry.register(
+            MCPAgent(
+                MCPTool(self.mcp_service)
+            )
+        )
+
+        #
+        # Workflow
+        #
         self.workflow = WorkflowGraph(
-            self.tool_registry
+            agent_registry=self.agent_registry
         )
 
+        #
+        # Chat Service
+        #
         self.chat_service = ChatService(
             self.workflow
         )

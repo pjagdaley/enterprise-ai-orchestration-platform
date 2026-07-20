@@ -6,26 +6,31 @@ from langgraph.graph import END
 from langgraph.graph import START
 from langgraph.graph import StateGraph
 
-from app.ai.agents.planner_agent import PlannerAgent
+from app.ai.agents.supervisor_agent import SupervisorAgent
 from app.ai.orchestrator.state import WorkflowState
-from app.ai.tools.models import ToolRequest
-from app.ai.tools.registry import ToolRegistry
+from app.ai.agents.registry import AgentRegistry
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class WorkflowGraph:
     """
     Enterprise AI workflow that orchestrates the execution of tools based on user input.
     """
 
-    def __init__(self, tool_registry: ToolRegistry,) -> None:
+    def __init__(
+        self,
+        agent_registry: AgentRegistry,
+    ) -> None:
         """
         Initialize the workflow.
         """
 
-        self._planner = PlannerAgent()
+        self._supervisor = SupervisorAgent()
 
-        self._tool_registry = tool_registry
-        
+        self._agent_registry = agent_registry
+
         workflow = StateGraph(WorkflowState)
 
         workflow.add_node(
@@ -54,28 +59,43 @@ class WorkflowGraph:
         """
 
         user_input = state["user_input"]
+        logger.info("Processing user request: %s", user_input)
 
         #
-        # Planner decides what to do.
+        # Supervisor decides what to do.
         #
-        decision = self._planner.plan(user_input)
+        decision = self._supervisor.decide(user_input)
+        logger.info(
+            "Supervisor decision: agent='%s', input='%s', parameters=%s",
+            decision.agent,
+            decision.input,
+            decision.parameters,
+        )
 
         #
-        # Get the selected tool.
+        # Get the selected agent.
         #
-        tool = self._tool_registry.get(decision.tool)
-
+        agent = self._agent_registry.get(decision.agent)
+        
         #
-        # Execute the tool.
+        # Execute the agent.
         #
-        result = await tool.execute(
-            ToolRequest(
-                input=decision.input,
-                parameters=decision.parameters,
-            )
+        logger.info(
+            "Executing agent='%s' with input='%s' and parameters=%s",
+            decision.agent,
+            decision.input,
+            decision.parameters
+        )
+        result = await agent.execute(
+            decision.input,
+            decision.parameters,
         )
 
         state["response"] = result.result
+        logger.info(
+            "Agent '%s' completed successfully",
+            decision.agent,
+        )
 
         return state
 

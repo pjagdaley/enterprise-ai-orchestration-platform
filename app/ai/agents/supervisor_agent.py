@@ -6,24 +6,32 @@ Determines how a user request should be processed.
 
 import re
 
-from app.ai.agents.models import PlannerResponse
+from app.ai.agents.models import SupervisorDecision
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-class PlannerAgent:
+class SupervisorAgent:
     """
     Determines the execution strategy for a user request.
     """
 
-    def plan(
+    def decide(
         self,
         user_input: str,
-    ) -> PlannerResponse:
+    ) -> SupervisorDecision:
         """
-        Determine which tool should handle the request.
+        Determine which agent should handle the request.
         """
 
         user_input = user_input.strip()
         lower_input = user_input.lower()
+        logger.debug(
+            "Analyzing user request: %s",
+            user_input,
+        )
 
         #
         # Calculator
@@ -33,8 +41,13 @@ class PlannerAgent:
             r"[0-9+\-*/().\s]+",
             user_input,
         ):
-            return PlannerResponse(
-                tool="calculator",
+            # Mathematical expressions
+            logger.info(
+                "Identified mathematical expression: %s",
+                user_input,
+            )
+            return SupervisorDecision(
+                agent="calculator",
                 input=user_input,
             )
 
@@ -44,9 +57,13 @@ class PlannerAgent:
 
         if lower_input.startswith("read "):
             path = user_input[5:].strip()
+            logger.info(
+                "Identified file read request: %s",
+                path,
+            )
 
-            return PlannerResponse(
-                tool="mcp",
+            return SupervisorDecision(
+                agent="mcp",
                 input="read_text_file",
                 parameters={
                     "path": path,
@@ -60,8 +77,12 @@ class PlannerAgent:
         if lower_input.startswith("list "):
             path = user_input[5:].strip()
 
-            return PlannerResponse(
-                tool="mcp",
+            logger.info(
+                "Identified directory listing request: %s",
+                path,
+            )
+            return SupervisorDecision(
+                agent="mcp",
                 input="list_directory",
                 parameters={
                     "path": path,
@@ -75,8 +96,13 @@ class PlannerAgent:
         if lower_input.startswith("mkdir "):
             path = user_input[6:].strip()
 
-            return PlannerResponse(
-                tool="mcp",
+            
+            logger.info(
+                "Identified directory creation request: %s",
+                path,
+            )
+            return SupervisorDecision(
+                agent="mcp",
                 input="create_directory",
                 parameters={
                     "path": path,
@@ -86,8 +112,12 @@ class PlannerAgent:
         #
         # Default -> RAG
         #
-
-        return PlannerResponse(
-            tool="rag",
+        logger.info(
+            "Defaulting to RAG agent for request: %s",
+            user_input,
+        )
+        
+        return SupervisorDecision(
+            agent="rag",
             input=user_input,
         )

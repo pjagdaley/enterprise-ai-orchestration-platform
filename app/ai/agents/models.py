@@ -9,24 +9,24 @@ from pydantic import ConfigDict
 from pydantic import Field
 
 
-class PlannerResponse(BaseModel):
+class SupervisorDecision(BaseModel):
     """
     Execution plan returned by the Planner Agent.
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    tool: str = Field(
+    agent: str = Field(
         ...,
-        description="Selected tool name."
+        description="Selected agent name."
     )
 
     input: str = Field(
         ...,
-        description="Primary input for the selected tool."
+        description="Primary input for the selected agent."
     )
 
     parameters: dict[str, Any] = Field(
         default_factory=dict,
-        description="Optional tool-specific parameters."
+        description="Optional agent-specific parameters."
     )
