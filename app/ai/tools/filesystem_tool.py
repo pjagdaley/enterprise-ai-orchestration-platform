@@ -8,16 +8,16 @@ from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
 
 
-class MCPTool(BaseTool):
+class FilesystemTool(BaseTool):
     """
     AI tool that executes tools exposed by an MCP server.
     """
 
     def __init__(
         self,
-        mcp_service: MCPService,
+        filesystem_mcp_service: MCPService,
     ) -> None:
-        self._mcp_service = mcp_service
+        self._mcp_service = filesystem_mcp_service
 
     @property
     def name(self) -> str:

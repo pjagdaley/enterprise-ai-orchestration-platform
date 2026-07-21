@@ -93,8 +93,10 @@ class WorkflowGraph:
 
         state["response"] = result.result
         logger.info(
-            "Agent '%s' completed successfully",
-            decision.agent,
+            "Agent returned ToolResponse: success=%s result=%r error=%r",
+            result.success,
+            result.result,
+            result.error,
         )
 
         return state

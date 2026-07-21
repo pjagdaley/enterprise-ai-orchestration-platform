@@ -6,7 +6,7 @@ from typing import Any
 
 from app.ai.agents.base_agent import BaseAgent
 
-from app.ai.tools.mcp_tool import MCPTool
+from app.ai.tools.filesystem_tool import FilesystemTool
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
 
@@ -14,14 +14,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class MCPAgent(BaseAgent):
+class FilesystemAgent(BaseAgent):
     """
     Executes MCP tools.
     """
 
     def __init__(
         self,
-        tool: MCPTool,
+        tool: FilesystemTool,
     ) -> None:
 
         self._tool = tool

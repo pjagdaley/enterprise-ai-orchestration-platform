@@ -7,7 +7,7 @@ from app.ai.tools.calculator_tool import CalculatorTool
 from app.ai.tools.rag_tool import RAGTool
 
 from app.ai.mcp.service import MCPService
-from app.ai.tools.mcp_tool import MCPTool
+from app.ai.tools.filesystem_tool import MCPTool
 
 
 class ToolRegistry:

@@ -11,6 +11,8 @@ from mcp.client.stdio import stdio_client
 
 from app.ai.mcp.models import MCPResponse, MCPTool
 
+import logging
+logger = logging.getLogger(__name__)
 
 class MCPClient:
     """
@@ -92,33 +94,55 @@ class MCPClient:
             arguments=arguments,
         ) 
 
+        logger.info("structuredContent=%r", result.structuredContent)
+        logger.info("content=%r", result.content)
+        logger.info("isError=%s", result.isError)
+        
         data = None
-
-        # Prefer structured data
-        # Prefer structured data
-        if result.structuredContent:
-
-            structured = result.structuredContent
-
-            # If the MCP server returns {"content": "..."},
-            # extract the text so the rest of the application
-            # always receives a string.
-            if (
-                isinstance(structured, dict)
-                and "content" in structured
-            ):
-                data = structured["content"]
-            else:
-                data = structured
-
         error = None
 
         if result.isError:
-            if result.content and hasattr(result.content[0], "text"):
-                error = result.content[0].text
+
+            if result.content:
+                text_parts = [
+                    item.text
+                    for item in result.content
+                    if hasattr(item, "text")
+                ]
+                error = "\n".join(text_parts)
             else:
                 error = "Tool execution failed"
-        
+
+        else:
+
+            #
+            # Prefer structured content.
+            #
+            if result.structuredContent is not None:
+
+                structured = result.structuredContent
+
+                if (
+                    isinstance(structured, dict)
+                    and "content" in structured
+                ):
+                    data = structured["content"]
+                else:
+                    data = structured
+
+            #
+            # Otherwise use text content.
+            #
+            elif result.content:
+
+                text_parts = [
+                    item.text
+                    for item in result.content
+                    if hasattr(item, "text")
+                ]
+
+                data = "\n".join(text_parts)
+
         return MCPResponse(
             success=not result.isError,
             data=data,
