@@ -4,6 +4,7 @@ Calculator Agent.
 
 from app.ai.agents.base_agent import BaseAgent
 
+from app.ai.models.parameters import CalculatorParameters
 from app.ai.tools.calculator_tool import CalculatorTool
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
@@ -30,15 +31,19 @@ class CalculatorAgent(BaseAgent):
     user_input: str,
     parameters: dict[str, Any],
     ) -> ToolResponse:
+                
+        params = CalculatorParameters.model_validate(parameters)
+        expression = params.expression
 
         logger.info(
             "Executing calculator expression='%s'",
-            user_input,
+            expression,
         )
-        
+
         return await self._tool.execute(
             ToolRequest(
-                input=user_input,
-                parameters=parameters,
+                input=expression,
+                parameters=params.model_dump(),
             )
         )
+        

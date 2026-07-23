@@ -4,6 +4,8 @@ MCP Client implementation.
 
 from __future__ import annotations
 
+import time
+
 from contextlib import AsyncExitStack
 
 from mcp import ClientSession, StdioServerParameters
@@ -51,12 +53,24 @@ class MCPClient:
 
         await self._session.initialize()
 
+    
     async def disconnect(self) -> None:
         """
         Close the MCP session.
         """
 
+        logger.info("Disconnecting MCP client...")
+
+        start = time.perf_counter()
+
         await self._stack.aclose()
+
+        elapsed = time.perf_counter() - start
+
+        logger.info(
+            "MCP client disconnected in %.2f seconds",
+            elapsed,
+        )
 
         self._session = None
 

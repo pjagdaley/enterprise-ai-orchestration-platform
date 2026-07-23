@@ -64,7 +64,7 @@ class WorkflowGraph:
         #
         # Supervisor decides what to do.
         #
-        decision = self._supervisor.decide(user_input)
+        decision = await self._supervisor.decide(user_input)
         logger.info(
             "Supervisor decision: agent='%s', input='%s', parameters=%s",
             decision.agent,

@@ -6,6 +6,7 @@ from typing import Any
 
 from app.ai.agents.base_agent import BaseAgent
 
+from app.ai.models.parameters import FilesystemParameters
 from app.ai.tools.filesystem_tool import FilesystemTool
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
@@ -28,23 +29,26 @@ class FilesystemAgent(BaseAgent):
 
     @property
     def name(self) -> str:
-        return "mcp"
+        return "filesystem"
 
     async def execute(
-        self,
-        user_input: str,
-        parameters: dict[str, Any],
+    self,
+    user_input: str,
+    parameters: dict[str, Any],
     ) -> ToolResponse:
 
+        logger.info("Filesystem parameters received: %s", parameters)
+
+        params = FilesystemParameters.model_validate(parameters)
+
         logger.info(
-            "Executing MCP tool='%s' with parameters=%s",
-            user_input,
-            parameters,
+            "Executing filesystem operation with path='%s'",
+            params.path,
         )
-        
+
         return await self._tool.execute(
             ToolRequest(
                 input=user_input,
-                parameters=parameters,
+                parameters=params.model_dump(),
             )
         )

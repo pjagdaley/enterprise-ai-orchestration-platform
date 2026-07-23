@@ -6,6 +6,7 @@ from typing import Any
 import logging
 
 from app.ai.agents.base_agent import BaseAgent
+from app.ai.models.parameters import GitParameters
 from app.ai.tools.git_tool import GitTool
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
@@ -43,43 +44,23 @@ class GitAgent(BaseAgent):
     ) -> ToolResponse:
         """
         Execute a Git operation.
-
-        Parameters
-        ----------
-        user_input:
-            Git MCP tool name, for example:
-                git_status
-                git_log
-                git_commit
-                git_add
-                git_branch
-                git_checkout
-
-        parameters:
-            Parameters required by the Git MCP tool.
-            Example:
-                {
-                    "message": "Initial commit"
-                }
         """
 
         logger.info(
-            "Executing Git tool '%s' with parameters=%s",
-            user_input,
+            "Git parameters received: %s",
             parameters,
         )
 
-        request = ToolRequest(
-            input=user_input,
-            parameters=parameters,
-        )
-
-        response = await self._tool.execute(request)
+        params = GitParameters.model_validate(parameters)
 
         logger.info(
-            "Git tool '%s' completed successfully=%s",
+            "Executing Git operation='%s'",
             user_input,
-            response.success,
         )
 
-        return response
+        return await self._tool.execute(
+            ToolRequest(
+                input=user_input,
+                parameters=params.model_dump(),
+            )
+        )

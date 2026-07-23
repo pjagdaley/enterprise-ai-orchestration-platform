@@ -2,12 +2,13 @@
 Git Tool.
 """
 
+import logging
+
 from app.ai.mcp.service import MCPService
 from app.ai.tools.base_tool import BaseTool
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
 
-import logging
 logger = logging.getLogger(__name__)
 
 
@@ -44,17 +45,23 @@ class GitTool(BaseTool):
 
         request.input:
             Git MCP tool name
-                Examples:
-                    git_status
-                    git_log
-                    git_commit
-                    git_add
-                    git_branch
+            Examples:
+                git_status
+                git_log
+                git_commit
+                git_add
+                git_branch
 
         request.parameters:
             Parameters required by the Git MCP tool.
             repo_path is automatically injected.
         """
+
+        logger.info(
+            "Executing Git MCP tool='%s' with parameters=%s",
+            request.input,
+            request.parameters,
+        )
 
         # Copy parameters to avoid modifying the caller's dictionary
         arguments = dict(request.parameters or {})

@@ -63,4 +63,4 @@ async def lifespan(app: FastAPI):
     # close_firestore()
     # close_qdrant()
     # close_scheduler()
-    await services.shutdown()
+    await services.shutdown() 

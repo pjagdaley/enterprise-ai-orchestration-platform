@@ -5,8 +5,10 @@ PostgreSQL Agent.
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from app.ai.agents.base_agent import BaseAgent
+from app.ai.models.parameters import PostgreSQLParameters
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
 from app.ai.tools.postgresql_tool import PostgreSQLTool
@@ -36,35 +38,27 @@ class PostgreSQLAgent(BaseAgent):
     async def execute(
         self,
         user_input: str,
-        parameters: dict,
+        parameters: dict[str, Any],
     ) -> ToolResponse:
         """
-        Execute a PostgreSQL tool.
+        Execute a PostgreSQL operation.
         """
 
         logger.info(
-            "Executing PostgreSQL tool '%s' with parameters=%s",
-            user_input,
+            "PostgreSQL parameters received: %s",
             parameters,
         )
 
-        request = ToolRequest(
-            input="query",
-            parameters={
-                "sql": """
-                SELECT table_name
-                FROM information_schema.tables
-                WHERE table_schema='public';
-                """
-            },
-        )
-
-        response = await self._tool.execute(request)
+        params = PostgreSQLParameters.model_validate(parameters)
 
         logger.info(
-            "PostgreSQL tool '%s' completed successfully=%s",
+            "Executing PostgreSQL operation='%s'",
             user_input,
-            response.success,
         )
 
-        return response
+        return await self._tool.execute(
+            ToolRequest(
+                input=user_input,
+                parameters=params.model_dump(),
+            )
+        )

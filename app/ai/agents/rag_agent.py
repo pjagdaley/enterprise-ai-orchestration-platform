@@ -2,15 +2,17 @@
 RAG Agent.
 """
 
-from app.ai.agents.base_agent import BaseAgent
+from typing import Any
+import logging
 
+from app.ai.agents.base_agent import BaseAgent
+from app.ai.models.parameters import RAGParameters
 from app.ai.tools.models import ToolRequest
 from app.ai.tools.models import ToolResponse
 from app.ai.tools.rag_tool import RAGTool
-from typing import Any
 
-import logging
 logger = logging.getLogger(__name__)
+
 
 class RAGAgent(BaseAgent):
     """
@@ -29,14 +31,22 @@ class RAGAgent(BaseAgent):
         user_input: str,
         parameters: dict[str, Any],
     ) -> ToolResponse:
-        
+
         logger.info(
-            "Executing RAG agent"
+            "RAG parameters received: %s",
+            parameters,
+        )
+
+        params = RAGParameters.model_validate(parameters)
+
+        logger.info(
+            "Executing RAG search for query='%s'",
+            user_input,
         )
 
         return await self._tool.execute(
             ToolRequest(
                 input=user_input,
-                parameters=parameters,
+                parameters=params.model_dump(),
             )
-        )    
+        )

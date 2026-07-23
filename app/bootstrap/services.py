@@ -5,8 +5,6 @@ Responsible for creating, initializing, and shutting down
 shared application services.
 """
 
-from venv import logger
-
 from app.ai.agents.calculator_agent import CalculatorAgent
 from app.ai.agents.filesystem_agent import FilesystemAgent
 from app.ai.agents.postgresql_agent import PostgreSQLAgent
@@ -21,6 +19,8 @@ from app.ai.tools.postgresql_tool import PostgreSQLTool
 from app.application.services.chat_service import ChatService
 from app.domain import tools
 
+from app.core.logging.logger import get_logger
+logger = get_logger(__name__)
 
 class ApplicationServices:
     """
@@ -43,15 +43,19 @@ class ApplicationServices:
         #
         # Filesystem MCP
         #
+        
         self.filesystem_mcp_service = MCPService(
             command="npx",
             args=[
                 "@modelcontextprotocol/server-filesystem",
-                r"C:\Temp",
+                r"C:\AI-ML-Projects",
             ],
         )
 
         await self.filesystem_mcp_service.initialize()
+
+        #tools = await self.filesystem_mcp_service.list_tools()
+        #logger.info("Filesystem MCP Tools: %s", tools)
 
         #
         # Git MCP
@@ -86,9 +90,9 @@ class ApplicationServices:
 
         await self.postgres_mcp_service.initialize()
 
-        tools = await self.postgres_mcp_service.list_tools()
+        #tools = await self.postgres_mcp_service.list_tools()
 
-        logger.info("PostgreSQL MCP Tools: %s", tools)
+        #logger.info("PostgreSQL MCP Tools: %s", tools)
 
         #
         # Agent Registry
@@ -102,7 +106,7 @@ class ApplicationServices:
         self.agent_registry.register(
             CalculatorAgent()
         )
-
+        
         self.agent_registry.register(
             FilesystemAgent(
                 FilesystemTool(
@@ -152,7 +156,16 @@ class ApplicationServices:
         """
 
         if self.filesystem_mcp_service:
+            logger.info("Stopping Filesystem MCP...")
             await self.filesystem_mcp_service.shutdown()
+            logger.info("Filesystem MCP stopped.")
 
         if self.git_mcp_service:
+            logger.info("Stopping Git MCP...")
             await self.git_mcp_service.shutdown()
+            logger.info("Git MCP stopped.")
+
+        if self.postgres_mcp_service:
+            logger.info("Stopping PostgreSQL MCP...")
+            await self.postgres_mcp_service.shutdown()
+            logger.info("PostgreSQL MCP stopped.")
