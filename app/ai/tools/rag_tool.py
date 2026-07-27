@@ -54,7 +54,7 @@ class RAGTool(BaseTool):
 
         results = await self._search_service.search(
             SearchRequest(
-                query=request.input,
+                query=request.action,
                 top_k=5,
             )
         )
@@ -64,7 +64,7 @@ class RAGTool(BaseTool):
         #
 
         results = await self._reranker.rerank(
-            request.input,
+            request.action,
             results,
         )
 
@@ -81,7 +81,7 @@ class RAGTool(BaseTool):
         # Build prompt
         #
         prompt = self._prompt_builder.build_rag_prompt(
-            question=request.input,
+            question=request.action,
             context=context,
         )    
 

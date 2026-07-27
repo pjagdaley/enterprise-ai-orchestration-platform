@@ -1,9 +1,14 @@
 @startuml
 
-title Enterprise AI Orchestration Platform
-title Document Processing Pipeline
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' Document Processing Pipeline
+'==============================================================================
 
 !theme plain
+
+title Enterprise AI Orchestration Platform
+title Document Processing Pipeline
 
 left to right direction
 
@@ -25,82 +30,102 @@ skinparam PackageBorderThickness 2
 skinparam ArrowThickness 1.5
 skinparam ArrowColor #404040
 
-package "Enterprise Sources" {
+'==============================================================================
+' ENTERPRISE CONTENT SOURCES
+'==============================================================================
+
+package "Enterprise Content Sources" {
+
+rectangle "Google Drive" as Drive
 
 rectangle "SharePoint" as SharePoint
 
-rectangle "Google Drive" as GoogleDrive
-
 rectangle "GitHub" as GitHub
 
-rectangle "SAP" as SAP
+rectangle "Local Uploads" as Uploads
 
-rectangle "Salesforce" as Salesforce
-
-rectangle "REST APIs" as RestAPI
+rectangle "Enterprise Applications" as Enterprise
 
 }
 
-package "Ingestion Pipeline" {
+'==============================================================================
+' DOCUMENT INGESTION
+'==============================================================================
+
+package "Document Processing" {
+
+rectangle "Document Service" as Document
 
 rectangle "Ingestion Service" as Ingestion
 
-rectangle "Document Parser" as Parser
+rectangle "Validation Service" as Validation
 
-rectangle "Metadata Extractor" as Metadata
+rectangle "Parser Service" as Parser
 
-rectangle "Chunking Engine" as Chunker
+rectangle "Chunking Service" as Chunker
 
-rectangle "Embedding Generator" as Embedder
+rectangle "Metadata Service" as Metadata
 
-rectangle "Validation Engine" as Validator
+rectangle "Embedding Service" as Embedding
 
 }
+
+'==============================================================================
+' VERTEX AI
+'==============================================================================
 
 package "Vertex AI" {
 
-rectangle "Embedding Models" as Embeddings
+rectangle "Embedding Models" as Models
 
 }
+
+'==============================================================================
+' KNOWLEDGE PLATFORM
+'==============================================================================
 
 package "Knowledge Platform" {
 
-database "Google Cloud Storage" as GCS
+database "Google Cloud Storage\n(Document Repository)" as GCS
 
-database "Qdrant Vector Database" as Qdrant
+database "Firestore\nDocument Registry" as Firestore
 
-database "Firestore Metadata Store" as Firestore
+database "Qdrant\nVector Database" as Qdrant
 
 }
 
-SharePoint --> Ingestion
+'==============================================================================
+' INGESTION FLOW
+'==============================================================================
 
-GoogleDrive --> Ingestion
+Drive --> Document
 
-GitHub --> Ingestion
+SharePoint --> Document
 
-SAP --> Ingestion
+GitHub --> Document
 
-Salesforce --> Ingestion
+Uploads --> Document
 
-RestAPI --> Ingestion
+Enterprise --> Document
 
-Ingestion --> Parser
+Document --> GCS : Store Original
 
-Parser --> Validator
+Document --> Ingestion
 
-Validator --> Metadata
+Ingestion --> Validation
 
-Metadata --> Chunker
+Validation --> Parser
 
-Chunker --> Embedder
+Parser --> Chunker
 
-Embedder --> Embeddings
+Chunker --> Metadata
 
-Embedder --> Qdrant
+Metadata --> Firestore : Store Metadata
 
-Metadata --> Firestore
+Metadata --> Embedding
 
-Parser --> GCS
+Embedding --> Models
+
+Embedding --> Qdrant : Store Embeddings
 
 @enduml

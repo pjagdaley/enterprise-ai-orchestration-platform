@@ -60,7 +60,7 @@ class GitAgent(BaseAgent):
 
         return await self._tool.execute(
             ToolRequest(
-                input=user_input,
+                action=user_input,
                 parameters=params.model_dump(),
             )
         )

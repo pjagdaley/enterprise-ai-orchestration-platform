@@ -37,7 +37,7 @@ package "Agent Orchestrator" {
 
 }
 
-package "Worker Agents" {
+package "Specialized Agents" {
 
     rectangle "Knowledge Retrieval Agent" as RetrievalAgent
 
@@ -45,23 +45,33 @@ package "Worker Agents" {
 
     rectangle "Enterprise Integration Agent" as IntegrationAgent
 
-    rectangle "Reporting Agent" as ReportingAgent
+    rectangle "Reporting & Response Agent" as ReportingAgent
 
 }
 
-package "Shared Services" {
+package "Agent Runtime Services" {
 
-    rectangle "Memory Manager" as Memory
+    rectangle "Conversation Memory" as Memory
 
-    rectangle "State Manager" as State
+    rectangle "Workflow State" as State
+
+}
+
+package "Knowledge Services" {
+
+    rectangle "Search Service" as Search
+
+}
+
+package "MCP Layer" {
 
     rectangle "MCP Client" as MCP
 
 }
 
-package "Enterprise Services" {
+package "Enterprise Platform" {
 
-    rectangle "Vertex AI" as VertexAI
+    rectangle "Gemini LLM" as Gemini
 
     database "Qdrant" as Qdrant
 
@@ -69,7 +79,7 @@ package "Enterprise Services" {
 
     database "Google Cloud Storage" as GCS
 
-    rectangle "Enterprise APIs" as EnterpriseAPI
+    rectangle "Enterprise Applications" as EnterpriseApps
 
 }
 
@@ -87,15 +97,21 @@ Supervisor --> IntegrationAgent
 
 Supervisor --> ReportingAgent
 
-RetrievalAgent --> Qdrant
+RetrievalAgent --> Search
 
-RetrievalAgent --> Firestore
+Search --> Qdrant
+
+Search --> Firestore
+
+Search --> GCS
 
 DocumentAgent --> GCS
 
-IntegrationAgent --> EnterpriseAPI
+IntegrationAgent --> MCP
 
-ReportingAgent --> VertexAI
+MCP --> EnterpriseApps
+
+ReportingAgent --> Gemini
 
 RetrievalAgent --> Memory
 

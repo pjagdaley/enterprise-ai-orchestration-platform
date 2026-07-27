@@ -1,0 +1,192 @@
+# ADR-0011: Use OpenSearch for Lexical Search
+
+- **Status:** Accepted
+- **Date:** 2026-07-13
+- **Decision Makers:** Architecture Team
+
+---
+
+# Context
+
+The Enterprise AI Orchestration Platform provides Retrieval-Augmented Generation (RAG) over enterprise knowledge stored in Google Cloud Storage.
+
+Initial implementations relied exclusively on semantic vector search using Qdrant. While semantic retrieval performs well for natural language queries, it is less effective for exact keyword searches involving:
+
+- Product codes
+- Error messages
+- Document identifiers
+- File names
+- Version numbers
+- Acronyms
+- Technical terminology
+- JSON keys
+- Excel cell values
+
+Enterprise users frequently search using exact identifiers rather than natural language.
+
+A complementary lexical search engine was required.
+
+---
+
+# Decision
+
+The platform will use **OpenSearch** as the lexical search engine.
+
+OpenSearch indexes document text using the BM25 ranking algorithm and provides high-performance keyword search.
+
+Hybrid Search combines:
+
+- Semantic Search (Qdrant)
+- Lexical Search (OpenSearch)
+
+Candidate results are merged before reranking.
+
+---
+
+# Alternatives Considered
+
+## Elasticsearch
+
+Pros
+
+- Mature ecosystem
+- Rich feature set
+- Excellent performance
+
+Cons
+
+- License restrictions
+- Less attractive for open-source projects
+
+Decision
+
+Not selected.
+
+---
+
+## PostgreSQL Full-Text Search
+
+Pros
+
+- No additional infrastructure
+- Good for small datasets
+
+Cons
+
+- Limited scalability
+- Less flexible ranking
+- Not optimized for large enterprise document collections
+
+Decision
+
+Not selected.
+
+---
+
+## Apache Solr
+
+Pros
+
+- Mature
+- Feature rich
+
+Cons
+
+- Operational complexity
+- Smaller community compared to OpenSearch
+
+Decision
+
+Not selected.
+
+---
+
+## Typesense / Meilisearch
+
+Pros
+
+- Simple deployment
+- Fast search
+
+Cons
+
+- Limited enterprise ecosystem
+- Fewer advanced search capabilities
+
+Decision
+
+Not selected.
+
+---
+
+# Rationale
+
+OpenSearch was selected because it:
+
+- Implements BM25 ranking
+- Supports enterprise-scale indexing
+- Scales horizontally
+- Provides rich filtering capabilities
+- Supports structured metadata
+- Integrates well with Hybrid Search
+- Is fully open source
+- Has a mature ecosystem
+
+---
+
+# Consequences
+
+Positive
+
+- Improved exact keyword retrieval
+- Better enterprise search quality
+- Better support for structured documents
+- Improved RAG grounding
+- Higher retrieval recall
+
+Negative
+
+- Additional infrastructure
+- Separate indexing pipeline
+- Additional operational monitoring
+- Increased storage requirements
+
+---
+
+# Architecture Impact
+
+```text
+User Query
+      │
+      ▼
+Hybrid Retrieval
+ ┌───────────────┐
+ ▼               ▼
+Qdrant      OpenSearch
+ │               │
+ └──────┬────────┘
+        ▼
+Candidate Fusion
+        ▼
+CrossEncoder
+        ▼
+Gemini
+```
+
+---
+
+# Review
+
+This decision should be reviewed if:
+
+- OpenSearch no longer meets performance requirements.
+- Native hybrid retrieval in the vector database becomes sufficient.
+- Enterprise search requirements change significantly.
+
+---
+
+# References
+
+- AI-005 Hybrid Search Strategy
+- AI-006 Reranking Strategy
+- Architecture Documentation

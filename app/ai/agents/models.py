@@ -21,9 +21,9 @@ class SupervisorDecision(BaseModel):
         description="Selected agent name."
     )
 
-    input: str = Field(
+    user_input: str = Field(
         ...,
-        description="Primary input for the selected agent."
+        description="Primary action for the selected agent."
     )
 
     parameters: dict[str, Any] = Field(

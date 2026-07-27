@@ -18,10 +18,8 @@ skinparam defaultFontSize 14
 skinparam RectangleBorderColor #404040
 skinparam RectangleBorderThickness 1.5
 skinparam RectangleRoundCorner 10
-
 skinparam PackageBorderColor #404040
 skinparam PackageBorderThickness 2
-
 skinparam ArrowThickness 1.5
 skinparam ArrowColor #404040
 
@@ -33,11 +31,9 @@ rectangle "LangGraph Runtime" as LangGraph
 
 package "Model Routing Layer" {
 
-    rectangle "Request Analyzer" as Analyzer
-
     rectangle "Model Router" as Router
 
-    rectangle "Policy Engine" as Policy
+    rectangle "Routing Decision Engine" as Decision
 
 }
 
@@ -51,7 +47,7 @@ package "Vertex AI Models" {
 
 }
 
-package "Enterprise Services" {
+package "Knowledge Platform" {
 
     database "Qdrant" as Qdrant
 
@@ -65,17 +61,15 @@ User --> API
 
 API --> LangGraph
 
-LangGraph --> Analyzer
+LangGraph --> Router
 
-Analyzer --> Policy
+Router --> Decision
 
-Policy --> Router
+Decision --> Flash : Low latency
 
-Router --> Flash : Simple Q&A
+Decision --> Pro : Advanced reasoning
 
-Router --> Pro : Complex Reasoning
-
-Router --> Embeddings : Vector Generation
+Decision --> Embeddings : Vector generation
 
 Flash --> LangGraph
 

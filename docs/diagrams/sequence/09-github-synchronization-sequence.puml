@@ -1,0 +1,63 @@
+@startuml
+title GitHub Repository Synchronization Sequence
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+participant "Scheduler" as Scheduler
+participant "GitHub Connector" as Connector
+participant "GitHub API" as GitHub
+participant "Document Service" as Document
+participant "Storage Service" as Storage
+database "Google Cloud Storage" as GCS
+participant "Ingestion Service" as Ingestion
+database "Firestore\nRegistry" as Registry
+
+Scheduler -> Connector : Trigger scheduled sync
+activate Connector
+
+Connector -> GitHub : Get changed files
+activate GitHub
+GitHub --> Connector : Repository files
+deactivate GitHub
+
+loop For each modified file
+
+    Connector -> GitHub : Download source file
+    activate GitHub
+    GitHub --> Connector : File content
+    deactivate GitHub
+
+    Connector -> Document : Register document
+    activate Document
+
+    Document -> Storage : Store file
+    activate Storage
+
+    Storage -> GCS : Upload object
+    activate GCS
+    GCS --> Storage : Object URI
+    deactivate GCS
+
+    Storage --> Document : Storage location
+    deactivate Storage
+
+    Document -> Registry : Save metadata
+    activate Registry
+    Registry --> Document : Metadata saved
+    deactivate Registry
+
+    Document -> Ingestion : Trigger ingestion
+    activate Ingestion
+    Ingestion --> Document : Accepted
+    deactivate Ingestion
+
+    Document --> Connector : Registration successful
+    deactivate Document
+
+end
+
+Connector --> Scheduler : Synchronization completed
+deactivate Connector
+
+@enduml

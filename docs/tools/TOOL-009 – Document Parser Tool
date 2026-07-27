@@ -1,0 +1,294 @@
+# TOOL-009 – Document Parser Tool
+
+## 1. Purpose
+
+The Document Parser Tool is responsible for extracting textual content and document metadata from supported file formats during the document ingestion process.
+
+It converts heterogeneous enterprise documents into a normalized text representation that can be processed by downstream AI components, including the Document Chunker Tool and Embedding Tool.
+
+The Document Parser Tool serves as the first stage of the document ingestion pipeline.
+
+---
+
+## 2. Responsibilities
+
+The Document Parser Tool is responsible for:
+
+- Detecting document format.
+- Extracting textual content.
+- Extracting document metadata.
+- Normalizing extracted text.
+- Handling supported document types.
+- Reporting parsing errors.
+- Returning structured parsing results.
+
+The Document Parser Tool does not split documents into chunks or generate embeddings.
+
+---
+
+## 3. Position within the Architecture
+
+```text
+                  Document Upload
+                         │
+                         ▼
+               Document Parser Tool
+                         │
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+     PDF Parser     DOCX Parser    Text Parser
+         │               │               │
+         └───────────────┼───────────────┘
+                         ▼
+                 Normalized Text
+                         │
+                         ▼
+             Document Chunker Tool
+```
+
+---
+
+## 4. Business Responsibilities
+
+The Document Parser Tool enables:
+
+- Enterprise document ingestion.
+- Knowledge base construction.
+- Text extraction.
+- Metadata extraction.
+- Document normalization.
+- Multi-format document support.
+
+Typical document types include:
+
+- Policy documents
+- Technical documentation
+- Architecture documents
+- Standard operating procedures
+- Spreadsheets
+- JSON configuration files
+
+---
+
+## 5. Inputs
+
+| Parameter | Description |
+|-----------|-------------|
+| Document | Uploaded file |
+| File Name | Original filename |
+| File Type | MIME type or extension |
+| Metadata | Optional upload metadata |
+
+---
+
+## 6. Outputs
+
+Example:
+
+```json
+{
+  "filename": "Architecture.pdf",
+  "document_type": "PDF",
+  "pages": 48,
+  "characters": 86215,
+  "status": "SUCCESS"
+}
+```
+
+---
+
+## 7. Processing Pipeline
+
+```text
+Receive Document
+        │
+        ▼
+Detect File Type
+        │
+        ▼
+Select Parser
+        │
+        ▼
+Extract Text
+        │
+        ▼
+Extract Metadata
+        │
+        ▼
+Normalize Content
+        │
+        ▼
+Return Parsed Document
+```
+
+---
+
+## 8. Public Interface
+
+| Operation | Description |
+|-----------|-------------|
+| parse() | Parse document |
+| detect_type() | Detect file type |
+| extract_text() | Extract document text |
+| extract_metadata() | Extract metadata |
+| health() | Tool health |
+
+---
+
+## 9. Interaction with Other Components
+
+| Component | Interaction |
+|-----------|-------------|
+| Ingestion Service | Invokes parser |
+| Document Chunker Tool | Receives normalized text |
+| Firestore Service | Stores document metadata |
+| Google Cloud Storage | Provides document content |
+
+---
+
+## 10. Supported File Formats
+
+| Format | Supported |
+|---------|-----------|
+| PDF | ✓ |
+| DOCX | ✓ |
+| TXT | ✓ |
+| Markdown | ✓ |
+| JSON | ✓ |
+| XLSX | ✓ |
+
+Additional formats may be added in future releases.
+
+---
+
+## 11. Metadata Extraction
+
+The parser extracts metadata including:
+
+- File name
+- File extension
+- File size
+- Page count (where applicable)
+- Character count
+- Upload timestamp
+- Content type
+
+---
+
+## 12. Error Handling
+
+| Failure | Behaviour |
+|----------|-----------|
+| Unsupported format | Reject document |
+| Corrupted file | Return parsing error |
+| Empty document | Reject ingestion |
+| Extraction failure | Log error and stop processing |
+| Oversized document | Reject according to platform limits |
+
+---
+
+## 13. Security Considerations
+
+The Document Parser Tool:
+
+- Validates supported file types.
+- Rejects malicious or invalid files.
+- Enforces maximum file size limits.
+- Sanitizes extracted content.
+- Logs parsing failures.
+
+---
+
+## 14. Performance Considerations
+
+- Stream large documents where possible.
+- Minimize memory usage.
+- Support asynchronous parsing.
+- Avoid duplicate parsing.
+- Process files independently.
+
+---
+
+## 15. Technology Stack
+
+| Technology | Purpose |
+|------------|---------|
+| Python | Implementation |
+| PyPDF2 / pypdf | PDF parsing |
+| python-docx | DOCX parsing |
+| openpyxl | XLSX parsing |
+| json | JSON parsing |
+| FastAPI | API layer |
+
+---
+
+## 16. Future Enhancements
+
+Future improvements may include:
+
+- OCR support for scanned PDFs.
+- Image text extraction.
+- HTML document support.
+- PowerPoint parsing.
+- Email (.eml) parsing.
+- Automatic language detection.
+- Multi-modal document parsing.
+
+---
+
+## 17. Sequence Diagram
+
+```text
+Ingestion Service
+        │
+        ▼
+Document Parser Tool
+        │
+        ▼
+Document Parser
+        │
+        ▼
+Normalized Text
+        │
+        ▼
+Document Chunker Tool
+```
+
+---
+
+## 18. Design Principles
+
+The Document Parser Tool follows these principles:
+
+- Format independence.
+- Stateless execution.
+- Extensible parser architecture.
+- Secure document processing.
+- Consistent normalized output.
+- Separation of parsing and chunking responsibilities.
+
+---
+
+## 19. Success Criteria
+
+The Document Parser Tool is considered successful when:
+
+- Supported documents are parsed successfully.
+- Text is extracted accurately.
+- Metadata is captured correctly.
+- Unsupported documents are rejected gracefully.
+- Output is normalized for downstream processing.
+
+---
+
+## Metadata
+
+| Property | Value |
+|----------|-------|
+| Tool ID | TOOL-009 |
+| Tool Name | Document Parser Tool |
+| Type | AI Processing Tool |
+| Category | Document Processing |
+| Owner | Enterprise AI Orchestration Platform |
+| Version | 1.0 |
+| Status | Implemented |

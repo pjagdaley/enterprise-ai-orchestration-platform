@@ -1,0 +1,114 @@
+@startuml
+title Enterprise Integration Architecture
+
+!theme plain
+
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+left to right direction
+
+package "Enterprise Content Sources" {
+
+    component "Google Drive" as gdrive
+    component "GitHub" as github
+    component "SharePoint" as sharepoint
+    component "Local File Upload" as localfiles
+
+}
+
+package "Enterprise AI Orchestration Platform" {
+
+    component "Connector Framework" as connector
+
+    component "Document Service" as document
+
+    component "Storage Service" as storage
+
+    database "Google Cloud Storage" as gcs
+
+    component "Ingestion Service" as ingestion
+
+    component "Parser" as parser
+
+    component "Chunker" as chunker
+
+    component "Embedding Service" as embedding
+
+    database "Firestore\nMetadata Registry" as firestore
+
+    database "Qdrant\nVector Database" as qdrant
+
+    component "Workflow Service" as workflow
+
+    component "Search Service" as search
+
+    component "Hybrid Retriever" as hybrid
+
+    component "CrossEncoder\nReranker" as reranker
+
+    component "Citation Service" as citation
+
+    component "Gemini LLM" as gemini
+
+    component "MCP Service" as mcp
+
+    component "Tool Registry" as registry
+
+}
+
+package "Enterprise Systems" {
+
+    component "CRM" as crm
+    component "ERP" as erp
+    component "Knowledge APIs" as apis
+    component "Custom MCP Servers" as mcpservers
+
+}
+
+gdrive --> connector
+github --> connector
+sharepoint --> connector
+localfiles --> connector
+
+connector --> document
+
+document --> storage
+storage --> gcs
+
+document --> firestore
+
+document --> ingestion
+
+ingestion --> parser
+parser --> chunker
+chunker --> embedding
+
+embedding --> qdrant
+
+workflow --> search
+
+search --> hybrid
+
+hybrid --> qdrant
+hybrid --> firestore
+
+hybrid --> reranker
+
+reranker --> citation
+
+citation --> gemini
+
+workflow --> mcp
+
+mcp --> registry
+
+registry --> crm
+registry --> erp
+registry --> apis
+registry --> mcpservers
+
+gemini --> workflow
+
+@enduml

@@ -33,11 +33,11 @@ rectangle "FastAPI Backend" as API
 
 rectangle "LangGraph Runtime" as LangGraph
 
-package "AI Governance Layer" {
-
-rectangle "Authentication & Authorization" as Auth
+package "AI Safety & Governance" {
 
 rectangle "Prompt Validation" as PromptValidation
+
+rectangle "Policy Engine" as Policy
 
 rectangle "PII Detection" as PII
 
@@ -45,17 +45,21 @@ rectangle "Content Safety" as Safety
 
 rectangle "Grounding Verification" as Grounding
 
-rectangle "Policy Engine" as Policy
-
 rectangle "Response Validation" as ResponseValidation
 
 rectangle "Audit Logger" as Audit
 
 }
 
+package "Knowledge Services" {
+
+rectangle "Citation Service" as Citation
+
+}
+
 package "Vertex AI" {
 
-rectangle "Gemini Models" as Gemini
+rectangle "Gemini LLM" as Gemini
 
 rectangle "Safety Filters" as SafetyFilters
 
@@ -71,7 +75,7 @@ database "Google Cloud Storage" as GCS
 
 }
 
-package "Operations" {
+package "Observability" {
 
 rectangle "Cloud Logging" as Logging
 
@@ -83,13 +87,13 @@ User --> React
 
 React --> API
 
-API --> Auth
+API --> PromptValidation
 
-Auth --> PromptValidation
+PromptValidation --> Policy
 
-PromptValidation --> PII
+Policy --> PII
 
-PII --> Policy
+Policy --> Safety
 
 Policy --> LangGraph
 
@@ -99,7 +103,9 @@ LangGraph --> Firestore
 
 LangGraph --> GCS
 
-LangGraph --> Gemini
+LangGraph --> Citation
+
+Citation --> Gemini
 
 Gemini --> SafetyFilters
 

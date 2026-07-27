@@ -2,8 +2,12 @@
 Lexical retriever using OpenSearch (BM25).
 """
 
+import logging
+
 from app.retrieval.hybrid.models import HybridSearchResult
 from app.retrieval.lexical.opensearch_service import OpenSearchService
+
+logger = logging.getLogger(__name__)
 
 
 class LexicalRetriever:
@@ -34,10 +38,20 @@ class LexicalRetriever:
             List of hybrid search results.
         """
 
-        hits = self._opensearch.search(
-            query=query,
-            top_k=top_k,
-        )
+        try:
+            hits = self._opensearch.search(
+                query=query,
+                top_k=top_k,
+            )
+
+        except Exception as ex:
+
+            logger.warning(
+                "OpenSearch search failed. Falling back to semantic search only. Error: %s",
+                ex,
+            )
+
+            return []
 
         results = []
 

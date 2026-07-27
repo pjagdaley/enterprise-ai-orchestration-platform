@@ -2,15 +2,15 @@
 
 # Solution Architecture
 
-| Property             | Value                                            |
-| -------------------- | ------------------------------------------------ |
-| **Project Name**     | Enterprise AI Orchestration Platform (EAOP)      |
+| Property | Value |
+|----------|-------|
+| **Project Name** | Enterprise AI Orchestration Platform (EAOP) |
 | **Project Codename** | Project AURA (AI Unified Reasoning & Automation) |
-| **Document**         | Solution Architecture                            |
-| **Version**          | 2.0                                              |
-| **Status**           | Approved                                         |
-| **Author**           | Pankaj Jagdaley                                  |
-| **Date**             | July 2025                                        |
+| **Document** | Solution Architecture |
+| **Version** | 3.0 |
+| **Status** | Approved |
+| **Author** | Pankaj Jagdaley |
+| **Date** | July 2025 |
 
 ---
 
@@ -19,875 +19,1489 @@
 1. Purpose
 2. Executive Summary
 3. Architectural Goals
-4. Architectural Principles
-5. Solution Overview
-6. High-Level Architecture
-7. Architectural Layers
-8. Core Platform Components
-9. AI Orchestration Architecture
-10. Enterprise Knowledge Services
-11. Enterprise Integration Architecture
-12. Conversation & Memory Architecture
-13. Cross-Cutting Concerns
-14. End-to-End Request Flow
-15. Technology Mapping
-16. Quality Attribute Realization
-17. Risks & Trade-offs
-18. Future Evolution
-19. Traceability
-20. Conclusion
+4. Architecture Principles
+5. Architectural Drivers
+6. Solution Overview
+7. High-Level Logical Architecture
+8. Architectural Layers
 
 ---
 
 # 1. Purpose
 
-This document describes the end-to-end solution architecture for the Enterprise AI Orchestration Platform (EAOP).
+This document defines the end-to-end Solution Architecture for the Enterprise AI Orchestration Platform (EAOP).
 
-It provides the logical architecture, architectural layers, platform components, interaction patterns, technology mapping, and architectural decisions required to implement a scalable, secure, cloud-native Enterprise AI Platform.
+It describes the logical organization of the platform, its architectural layers, major components, interaction patterns, quality attribute realization, and architectural decisions that collectively enable the delivery of enterprise-grade AI capabilities.
 
-The architecture follows Domain-Driven Design (DDD), Clean Architecture, API-First design, and Cloud-Native Architecture principles.
+The Solution Architecture provides the blueprint that guides implementation while remaining independent of specific infrastructure products wherever practical. Technology selections and deployment details are documented separately in the Technology Architecture and Deployment Architecture.
 
 ---
 
 # 2. Executive Summary
 
-The Enterprise AI Orchestration Platform (EAOP) is a production-ready enterprise platform that combines AI agents, enterprise knowledge, workflow orchestration, and enterprise tool integration into a unified architecture.
+The Enterprise AI Orchestration Platform (EAOP) is an enterprise-grade AI platform that combines conversational AI, intelligent workflow orchestration, enterprise knowledge services, and enterprise system integration into a unified solution.
 
-Unlike traditional AI chatbots or standalone Retrieval-Augmented Generation (RAG) systems, EAOP treats RAG as one of several enterprise services. The platform is centered on AI orchestration using LangGraph, enabling specialized agents to collaborate, retrieve enterprise knowledge, execute enterprise tools using Model Context Protocol (MCP), and provide explainable AI responses.
+Unlike traditional chatbot solutions or standalone Retrieval-Augmented Generation (RAG) applications, EAOP treats AI orchestration as the central business capability. Knowledge retrieval, workflow execution, enterprise integrations, governance, and administration operate as supporting capabilities coordinated through the orchestration layer.
 
-The platform is designed for extensibility, allowing organizations to introduce new agents, enterprise systems, workflows, and AI capabilities without significant architectural changes.
+The platform is designed around the following architectural characteristics:
+
+- Business capability–driven architecture
+- Domain-Driven Design (DDD)
+- Layered architecture
+- Clean Architecture
+- API-first design
+- Cloud-native deployment principles
+- Modular implementation
+- Security by design
+- Responsible AI
+- Extensible enterprise integration
+
+The architecture enables organizations to introduce new AI capabilities, enterprise integrations, workflows, and business domains with minimal architectural impact.
 
 ---
 
 # 3. Architectural Goals
 
-The architecture is designed to achieve the following objectives:
+The architecture is intended to achieve the following strategic objectives.
 
-* Build a reusable Enterprise AI Platform.
-* Enable intelligent multi-agent orchestration.
-* Provide enterprise knowledge services through RAG.
-* Standardize enterprise integrations using MCP.
-* Support scalable cloud-native deployment.
-* Maintain security and governance by design.
-* Promote modularity and loose coupling.
-* Enable future AI evolution with minimal redesign.
+## 3.1 Business Goals
 
----
-
-# 4. Architectural Principles
-
-The solution architecture aligns with the Architecture Principles document and follows:
-
-* Business Capability Driven Design
-* Domain-Driven Design (DDD)
-* Cloud-Native Architecture
-* API-First Design
-* AI-First Design
-* Security by Design
-* Responsible AI
-* Modular Architecture
-* Event-Ready Design
-* Configuration over Hard Coding
-* Automation First
-* Observability by Default
+- Deliver a reusable Enterprise AI Platform.
+- Accelerate enterprise automation.
+- Improve knowledge accessibility.
+- Enable intelligent business workflows.
+- Reduce integration complexity.
+- Improve operational efficiency.
+- Support responsible AI adoption.
 
 ---
 
-# 5. Solution Overview
+## 3.2 Architectural Goals
 
-The Enterprise AI Orchestration Platform consists of seven logical architecture layers.
+The architecture shall:
 
-Each layer has clearly defined responsibilities and communicates through well-defined interfaces.
-
-The architecture separates business capabilities from implementation technologies, ensuring maintainability and future evolution.
+- Support modular business capabilities.
+- Enable independent evolution of platform components.
+- Minimize coupling between bounded contexts.
+- Support enterprise-scale deployment.
+- Maintain high availability and resilience.
+- Provide strong governance and security.
+- Enable explainable AI.
+- Support future business growth.
+- Promote technology abstraction.
+- Minimize vendor lock-in where practical.
 
 ---
 
-# 6. High-Level Solution Architecture
+## 3.3 Design Objectives
+
+The solution emphasizes:
+
+- High cohesion
+- Loose coupling
+- Explicit boundaries
+- Service abstraction
+- Reusable platform capabilities
+- Separation of concerns
+- Configuration over customization
+- Observability by default
+
+---
+
+# 4. Architecture Principles
+
+The Solution Architecture aligns with the Architecture Principles defined for the Enterprise AI Orchestration Platform.
+
+## Business Capability Driven
+
+Architecture shall be organized around business capabilities rather than technical implementation.
+
+---
+
+## Domain-Driven Design
+
+Business domains determine architectural boundaries.
+
+Bounded contexts define ownership and responsibility.
+
+---
+
+## Clean Architecture
+
+Business logic shall remain independent of infrastructure technologies.
+
+Dependencies shall point inward toward the domain.
+
+---
+
+## API-First
+
+Business capabilities shall expose stable service contracts.
+
+Interfaces shall evolve independently of implementation.
+
+---
+
+## Modular Architecture
+
+Major business capabilities shall be developed as independent modules.
+
+Modules shall communicate through explicit interfaces.
+
+---
+
+## Security by Design
+
+Security shall be incorporated into every architectural layer.
+
+Authentication, authorization, auditing, and governance are cross-cutting concerns.
+
+---
+
+## Responsible AI
+
+AI capabilities shall prioritize:
+
+- Transparency
+- Explainability
+- Traceability
+- Human oversight
+- Governance
+
+---
+
+## Cloud-Native
+
+The solution shall leverage cloud-native architectural patterns while minimizing unnecessary provider dependency.
+
+---
+
+## Observability by Default
+
+Operational visibility shall be built into the platform through logging, metrics, tracing, and health monitoring.
+
+---
+
+# 5. Architectural Drivers
+
+The solution architecture is influenced by several business and technical drivers.
+
+## Business Drivers
+
+- Enterprise AI adoption
+- Intelligent process automation
+- Enterprise knowledge management
+- Digital transformation
+- Improved decision support
+- Faster business operations
+
+---
+
+## Technical Drivers
+
+- Multi-agent AI
+- Enterprise integrations
+- Workflow orchestration
+- Hybrid knowledge retrieval
+- Responsible AI
+- Cloud-native scalability
+- Secure enterprise operations
+
+---
+
+## Quality Drivers
+
+The architecture prioritizes:
+
+- Scalability
+- Reliability
+- Availability
+- Security
+- Maintainability
+- Extensibility
+- Observability
+- Performance
+- AI Quality
+
+These quality attributes are defined in the Non-Functional Requirements document.
+
+---
+
+# 6. Solution Overview
+
+The Enterprise AI Orchestration Platform is composed of multiple collaborating business capabilities.
+
+At the highest level, the platform consists of:
+
+- Presentation Services
+- API Services
+- Application Services
+- AI Orchestration
+- Enterprise Knowledge Services
+- Workflow Management
+- Enterprise Integration
+- Platform Services
+
+Each capability has clearly defined responsibilities and interacts with other capabilities through well-defined service contracts.
+
+The platform separates business capabilities from implementation technologies, enabling independent evolution of architectural layers while preserving consistency across the enterprise.
+
+---
+
+# 7. High-Level Logical Architecture
 
 ```text
-                               Users
-                                  │
-                                  ▼
-                      React Web Application
-                                  │
-                                  ▼
-                     FastAPI API Gateway
-                                  │
-                                  ▼
-               Enterprise AI Orchestration Platform
-                                  │
-      ┌───────────────┬───────────────┬────────────────┐
-      ▼               ▼               ▼
- AI Orchestration  Knowledge     Enterprise
-      Layer         Services      Integration
-      │               │               │
-      ▼               ▼               ▼
- LangGraph         Qdrant         MCP Runtime
- Supervisor        Vertex AI      Enterprise Tools
-      │
-      ▼
- Google Cloud Platform
+                             Enterprise Users
+                                     │
+                                     ▼
+                        Presentation Services
+                                     │
+                                     ▼
+                              API Services
+                                     │
+                                     ▼
+                        Application Services
+                                     │
+                                     ▼
+                     AI Orchestration (Core Context)
+          ┌──────────────────┼──────────────────┐
+          ▼                  ▼                  ▼
+ Enterprise          Workflow             Enterprise
+ Knowledge           Management           Integration
+    │                    │                     │
+    └──────────────┬─────┴──────────────┬──────┘
+                   ▼                    ▼
+          AI Governance         Platform Services
+                   │
+                   ▼
+       Infrastructure & External Services
 ```
 
 ---
 
-# 7. Architectural Layers
+## Architectural Characteristics
 
-The solution architecture is organized into seven logical layers.
+The architecture provides:
+
+- Separation of business capabilities
+- Clear bounded contexts
+- Independent service evolution
+- Enterprise integration abstraction
+- Reusable AI capabilities
+- Cross-cutting governance
+- Operational observability
+- Technology independence
 
 ---
 
-## 7.1 Presentation Layer
+# 8. Architectural Layers
+
+The Enterprise AI Orchestration Platform is organized into eight logical layers.
+
+| Layer | Primary Responsibility |
+|--------|------------------------|
+| Presentation Layer | User interaction and administration |
+| API Layer | External service interfaces |
+| Application Layer | Business application services |
+| AI Orchestration Layer | Intelligent coordination and planning |
+| Enterprise Knowledge Layer | Knowledge management and retrieval |
+| Workflow Layer | Business process execution |
+| Enterprise Integration Layer | External system integration |
+| Platform Services Layer | Shared platform capabilities |
+
+The following sections describe each architectural layer in detail.
+
+---
+# 9. Presentation Layer
+
+## Purpose
+
+The Presentation Layer provides the primary interaction point between users and the Enterprise AI Orchestration Platform.
+
+It is responsible for delivering a secure, intuitive, and responsive user experience while remaining independent of business logic.
+
+---
+
+## Responsibilities
+
+- User authentication
+- User interaction
+- Conversation interface
+- Administration interface
+- Dashboard presentation
+- Request validation
+- Response rendering
+- File upload interface
+- User preferences
+
+---
+
+## Business Capabilities
+
+The Presentation Layer supports:
+
+- Conversational AI
+- Enterprise search
+- Workflow initiation
+- Administrative operations
+- Knowledge management
+- User profile management
+- Platform configuration
+
+---
+
+## Exposed Interfaces
+
+- Web User Interface
+- Administrative Console
+- REST Client
+- Streaming Response Interface
+
+---
+
+## Design Principles
+
+The Presentation Layer shall:
+
+- Contain no business logic.
+- Delegate all business operations to application services.
+- Support responsive user experiences.
+- Provide consistent navigation.
+- Handle presentation-specific validation.
+- Support accessibility requirements.
+
+---
+
+# 10. API Layer
+
+## Purpose
+
+The API Layer provides standardized service interfaces for external clients and internal platform consumers.
+
+It acts as the entry point into the platform while enforcing security, validation, and governance policies.
+
+---
+
+## Responsibilities
+
+- API routing
+- Authentication
+- Authorization
+- Request validation
+- Response transformation
+- API versioning
+- Rate limiting
+- Error handling
+- Request correlation
+
+---
+
+## Business Capabilities
+
+- User APIs
+- Conversation APIs
+- Knowledge APIs
+- Workflow APIs
+- Administration APIs
+- Monitoring APIs
+
+---
+
+## Design Principles
+
+The API Layer shall:
+
+- Expose stable service contracts.
+- Remain independent of business implementation.
+- Support backward compatibility.
+- Validate all incoming requests.
+- Standardize error responses.
+- Protect platform services from invalid requests.
+
+---
+
+## Primary Interactions
+
+The API Layer communicates with:
+
+- Application Services
+- Authentication Services
+- Monitoring Services
+- Platform Administration
+
+---
+
+# 11. Application Layer
+
+## Purpose
+
+The Application Layer coordinates business use cases and orchestrates interactions between domain services and infrastructure services.
+
+It implements application workflows without containing core business rules.
+
+---
+
+## Responsibilities
+
+- Coordinate business operations
+- Execute application use cases
+- Manage transactions
+- Invoke domain services
+- Coordinate workflows
+- Manage application state
+- Handle request orchestration
+
+---
+
+## Core Application Services
+
+The layer contains services responsible for:
+
+- User Management
+- Conversation Management
+- Document Management
+- Knowledge Management
+- Workflow Management
+- Configuration Management
+- Prompt Management
+- Administration
+
+---
+
+## Design Principles
+
+Application Services shall:
+
+- Contain application logic only.
+- Delegate business rules to domain services.
+- Coordinate interactions between bounded contexts.
+- Remain independent of infrastructure technologies.
+- Expose reusable business use cases.
+
+---
+
+## Relationships
+
+The Application Layer interacts with:
+
+- API Layer
+- AI Orchestration Layer
+- Enterprise Knowledge Layer
+- Workflow Layer
+- Enterprise Integration Layer
+
+---
+
+# 12. AI Orchestration Layer
+
+## Purpose
+
+The AI Orchestration Layer is the central business capability of the Enterprise AI Orchestration Platform.
+
+It coordinates intelligent decision-making, agent collaboration, workflow execution, and enterprise capability composition.
+
+This is the **Core Context** within the overall solution architecture.
+
+---
+
+## Responsibilities
+
+The AI Orchestration Layer is responsible for:
+
+- Intent analysis
+- Execution planning
+- Agent coordination
+- Workflow orchestration
+- Task delegation
+- Response aggregation
+- Decision making
+- Context management
+- Execution monitoring
+
+---
+
+## Logical Components
+
+The orchestration capability consists of:
+
+- Supervisor
+- Planner
+- Knowledge Agent
+- Research Agent
+- Integration Agent
+- Reviewer Agent
+- Response Composer
+
+---
+
+## Supervisor
 
 ### Responsibilities
 
-* User Interface
-* Authentication
-* Conversation Experience
-* Dashboard
-* Administration
-
-### Components
-
-* React
-* TypeScript
-* Material UI
-* Authentication UI
+- Receive user requests
+- Maintain execution state
+- Coordinate collaborating agents
+- Aggregate intermediate results
+- Produce final responses
 
 ---
 
-## 7.2 API Gateway Layer
+## Planner
 
 ### Responsibilities
 
-* REST APIs
-* Authentication
-* Authorization
-* Request Validation
-* Rate Limiting
-* API Versioning
-* Response Transformation
-
-### Components
-
-* FastAPI
-* Pydantic
-* Middleware
-* Dependency Injection
-
----
-
-## 7.3 Application Services Layer
-
-This layer contains business application services.
-
-### Responsibilities
-
-* User Management
-* Document Management
-* Conversation Management
-* Session Management
-* Configuration
-* Prompt Management
-
-Application services coordinate business operations but do not implement AI orchestration logic.
-
----
-
-## 7.4 AI Orchestration Layer
-
-This is the heart of the platform.
-
-### Responsibilities
-
-* Workflow execution
-* Agent collaboration
-* Planning
-* Routing
-* Task delegation
-* State management
-* Decision making
-
-### Technology
-
-LangGraph
-
----
-
-## 7.5 Enterprise Knowledge Services Layer
-
-Knowledge Services provide trusted enterprise information.
-
-Responsibilities include:
-
-* Document ingestion
-* Parsing
-* Chunking
-* Embeddings
-* Hybrid Search
-* Citation Generation
-* Knowledge Grounding
-
-This layer encapsulates RAG capabilities.
-
----
-
-## 7.6 Enterprise Integration Layer
-
-Responsibilities
-
-* MCP
-* Tool Discovery
-* Tool Invocation
-* Enterprise APIs
-* External Systems
-
-This layer standardizes communication with enterprise applications.
-
----
-
-## 7.7 Platform Infrastructure Layer
-
-Responsibilities
-
-* Cloud Infrastructure
-* Monitoring
-* Storage
-* Security
-* Deployment
-* Networking
-
-Implemented using Google Cloud Platform.
-
----
-
-# 8. Core Platform Components
-
-The platform consists of the following logical components.
-
-## User Interface
-
-Provides conversational and administrative interfaces.
-
----
-
-## API Gateway
-
-Provides secure REST APIs.
-
----
-
-## Authentication Service
-
-Manages user identity and access.
-
----
-
-## Conversation Service
-
-Maintains chat sessions and conversation history.
-
----
-
-## Workflow Engine
-
-Coordinates enterprise workflows.
-
----
-
-## LangGraph Supervisor
-
-Central orchestration component responsible for coordinating all AI agents.
-
----
-
-## Knowledge Services
-
-Provide enterprise knowledge retrieval.
-
----
-
-## MCP Runtime
-
-Provides enterprise tool connectivity.
-
----
-
-## Monitoring Service
-
-Provides logs, metrics, dashboards, and alerts.
-
----
-
-# 9. AI Orchestration Architecture
-
-The platform adopts the Supervisor Pattern using LangGraph.
-
-```text
-                     Supervisor
-                          │
-      ┌──────────┬────────┼─────────┬──────────┐
-      ▼          ▼        ▼         ▼          ▼
- Planner   Knowledge   Research  Integration Reviewer
-  Agent      Agent      Agent       Agent       Agent
-```
-
----
-
-## Supervisor Agent
-
-Responsibilities
-
-* Receive requests
-* Maintain workflow state
-* Coordinate agents
-* Aggregate responses
-* Return final output
-
----
-
-## Planner Agent
-
-Responsibilities
-
-* Analyze user intent
-* Decompose complex requests
-* Create execution plans
-* Prioritize tasks
+- Understand user intent
+- Build execution plans
+- Prioritize work
+- Select appropriate capabilities
+- Optimize execution strategy
 
 ---
 
 ## Knowledge Agent
 
-Responsibilities
+### Responsibilities
 
-* Enterprise search
-* Hybrid retrieval
-* Citation generation
-* Knowledge grounding
+- Retrieve enterprise knowledge
+- Validate retrieved information
+- Generate citations
+- Supply grounded context
 
 ---
 
 ## Research Agent
 
-Responsibilities
+### Responsibilities
 
-* Supplement enterprise knowledge
-* Summarize research
-* Produce structured outputs
+- Retrieve supplementary information
+- Summarize findings
+- Produce structured research outputs
 
 ---
 
 ## Integration Agent
 
-Responsibilities
+### Responsibilities
 
-* Invoke MCP tools
-* Execute enterprise actions
-* Validate permissions
+- Execute enterprise capabilities
+- Invoke external services
+- Coordinate enterprise tools
+- Validate execution authorization
 
 ---
 
 ## Reviewer Agent
 
-Responsibilities
+### Responsibilities
 
-* Validate responses
-* Verify citations
-* Detect hallucinations
-* Produce confidence assessment
+- Review AI outputs
+- Validate citations
+- Assess confidence
+- Detect unsupported responses
+- Improve response quality
 
 ---
 
-# 10. Enterprise Knowledge Services
+## Response Composer
 
-The Knowledge Services layer provides enterprise knowledge capabilities.
+### Responsibilities
+
+- Aggregate agent outputs
+- Build final response
+- Preserve citations
+- Apply response formatting
+- Support streaming delivery
+
+---
+
+## Architectural Characteristics
+
+The AI Orchestration Layer provides:
+
+- Multi-agent collaboration
+- Dynamic planning
+- Modular execution
+- Stateful workflows
+- Explainable execution
+- Reusable AI capabilities
+
+---
+
+# 13. Enterprise Knowledge Layer
+
+## Purpose
+
+The Enterprise Knowledge Layer manages the complete lifecycle of enterprise knowledge from ingestion through retrieval and citation.
+
+It provides trusted business information to the AI Orchestration Layer while remaining independent of AI models.
+
+---
+
+## Responsibilities
+
+- Knowledge ingestion
+- Document management
+- Metadata management
+- Content processing
+- Knowledge organization
+- Knowledge retrieval
+- Citation generation
+- Knowledge governance
+
+---
+
+## Knowledge Lifecycle
 
 ```text
-Documents
-     │
-     ▼
-Parser
-     │
-     ▼
-Chunking
-     │
-     ▼
-Embeddings
-     │
-     ▼
-Qdrant
-     │
-     ▼
-Hybrid Search
-     │
-     ▼
-Citation Service
-     │
-     ▼
-Knowledge Agent
-```
-
-Responsibilities include:
-
-* Document ingestion
-* Metadata extraction
-* Chunk generation
-* Embedding generation
-* Vector indexing
-* BM25 indexing
-* Hybrid retrieval
-* Citation generation
-* Knowledge grounding
-
----
-
-# 11. Enterprise Integration Architecture
-
-Enterprise integrations are standardized through Model Context Protocol (MCP).
-
-```text
-Integration Agent
+Knowledge Source
         │
         ▼
-    MCP Client
+Document Processing
         │
         ▼
-    MCP Server
+Metadata Extraction
         │
         ▼
-Enterprise Tool
-```
-
-Supported integrations include:
-
-* Google Drive
-* GitHub
-* File System
-* PostgreSQL
-* Google Calendar
-* Gmail
-* Enterprise REST APIs
-
-The MCP layer abstracts enterprise tools behind a consistent protocol, reducing coupling and simplifying future integrations.
-
----
-
-# 12. Conversation & Memory Architecture
-
-The platform maintains conversational continuity through session-aware memory.
-
-Components include:
-
-* Conversation Service
-* Session Manager
-* Firestore Chat History
-* LangGraph State
-* Workflow State
-* Context Builder
-
-Conversation history is retrieved and combined with grounded enterprise knowledge before AI execution, ensuring context-aware and traceable responses.
-
----
-
-# 13. Cross-Cutting Concerns
-
-The following concerns apply across all architectural layers:
-
-* Authentication & Authorization
-* Configuration Management
-* Logging
-* Monitoring
-* Exception Handling
-* Audit Logging
-* Secrets Management
-* API Versioning
-* Observability
-* Cost Monitoring
-* Responsible AI Controls
-
-These services are implemented once and shared across the platform to ensure consistency and reduce duplication.
----
-
-# 14. End-to-End Request Flow
-
-The following sequence illustrates the complete lifecycle of a user request through the Enterprise AI Orchestration Platform.
-
-```text
-┌────────────┐
-│    User    │
-└─────┬──────┘
-      │
-      ▼
-React Web Application
-      │
-      ▼
-FastAPI API Gateway
-      │
-      ▼
-Authentication & Authorization
-      │
-      ▼
-Conversation Manager
-      │
-      ▼
-LangGraph Supervisor
-      │
-      ▼
-Planner Agent
-      │
-      ▼
-Determine Execution Strategy
-      │
-      ├─────────────────────────────┐
-      ▼                             ▼
-Knowledge Agent              Integration Agent
-      │                             │
-      ▼                             ▼
-Hybrid Search                 MCP Client
-      │                             │
-      ▼                             ▼
-Qdrant                     MCP Server
-      │                             │
-      ▼                             ▼
-Knowledge Context       Enterprise Tool
-      │                             │
-      └──────────────┬──────────────┘
-                     ▼
-              Reviewer Agent
-                     │
-                     ▼
-              Response Composer
-                     │
-                     ▼
-              Streaming Response
-                     │
-                     ▼
-                   User
+Content Chunking
+        │
+        ▼
+Knowledge Indexing
+        │
+        ▼
+Knowledge Retrieval
+        │
+        ▼
+Citation Generation
+        │
+        ▼
+Grounded AI Response
 ```
 
 ---
 
-# 15. Component Interactions
+## Business Capabilities
 
-## Presentation Layer
+The Enterprise Knowledge Layer supports:
 
-Interacts with:
-
-* API Gateway
-* Authentication
-* Conversation Service
-
-Communication Protocol:
-
-* HTTPS REST APIs
-* Streaming Responses (Server-Sent Events or WebSockets in future)
+- Enterprise search
+- Knowledge retrieval
+- Knowledge grounding
+- Citation generation
+- Knowledge governance
+- Metadata management
+- Document lifecycle management
 
 ---
 
-## API Gateway
+## Design Principles
 
-Interacts with:
+The Enterprise Knowledge Layer shall:
 
-* Authentication Service
-* Conversation Service
-* Workflow Service
-* LangGraph Runtime
-
-Responsibilities:
-
-* Request validation
-* Authentication
-* Authorization
-* API versioning
-* Response formatting
+- Maintain ownership of enterprise knowledge.
+- Separate document processing from retrieval.
+- Preserve document traceability.
+- Support multiple knowledge sources.
+- Support evolving retrieval strategies.
+- Maintain knowledge quality.
 
 ---
 
-## Application Services
+## Relationships
 
-Coordinate business operations including:
+The Enterprise Knowledge Layer collaborates with:
 
-* User management
-* Session management
-* Document management
-* Prompt management
-* Configuration management
+- AI Orchestration Layer
+- Workflow Layer
+- AI Governance
+- Monitoring Services
 
-These services invoke AI orchestration when required but remain independent of AI implementation details.
-
----
-
-## AI Orchestration Layer
-
-Coordinates all AI activities.
-
-Primary interactions include:
-
-* Planner → Knowledge Agent
-* Planner → Integration Agent
-* Planner → Research Agent
-* Supervisor → Reviewer
-* Supervisor → Response Composer
+Knowledge retrieval shall occur through published service interfaces rather than direct access to implementation details.
 
 ---
 
-## Knowledge Services
+# 14. Layer Interaction Summary
 
-Responsible for:
+| Layer | Consumes | Provides |
+|--------|----------|----------|
+| Presentation | API Layer | User Experience |
+| API | Application Layer | Service Interfaces |
+| Application | Domain Services | Business Use Cases |
+| AI Orchestration | Knowledge, Workflow, Integration | Intelligent Coordination |
+| Enterprise Knowledge | Document Sources | Trusted Enterprise Knowledge |
 
-* Document ingestion
-* Metadata extraction
-* Embedding generation
-* Hybrid retrieval
-* Citation generation
+The remaining architectural layers continue this logical flow while preserving clear separation of responsibilities across the platform.
 
-Consumes:
+---
+# 15. Workflow Layer
 
-* Cloud Storage
-* Vertex AI Embeddings
-* Qdrant
+## Purpose
+
+The Workflow Layer manages the execution of business processes and coordinates long-running enterprise workflows.
+
+It provides execution management independent of user interfaces, AI capabilities, and infrastructure technologies.
 
 ---
 
-## Enterprise Integration Layer
+## Responsibilities
 
-Responsible for:
+The Workflow Layer is responsible for:
 
-* Tool discovery
-* Tool execution
-* External system communication
-* MCP protocol implementation
-
-Provides a technology-independent abstraction for enterprise integrations.
-
----
-
-# 16. Technology Mapping
-
-| Architectural Layer    | Primary Technologies                              |
-| ---------------------- | ------------------------------------------------- |
-| Presentation Layer     | React, TypeScript, Material UI                    |
-| API Gateway            | FastAPI, Pydantic                                 |
-| Application Services   | Python                                            |
-| AI Orchestration       | LangGraph                                         |
-| LLM                    | Gemini 2.5 Pro / Flash                            |
-| Embeddings             | Vertex AI text-embedding-005                      |
-| Knowledge Services     | LangChain (document processing), Hybrid Retrieval |
-| Vector Database        | Qdrant                                            |
-| Lexical Search         | BM25                                              |
-| Enterprise Integration | MCP                                               |
-| Authentication         | Firebase Authentication                           |
-| Session Storage        | Firestore                                         |
-| Document Storage       | Google Cloud Storage                              |
-| Secrets                | Google Secret Manager                             |
-| Deployment             | Cloud Run                                         |
-| Containerization       | Docker                                            |
-| Monitoring             | Cloud Logging, Cloud Monitoring                   |
-| CI/CD                  | Cloud Build, Artifact Registry                    |
+- Workflow definition
+- Workflow execution
+- Task scheduling
+- Execution state management
+- Long-running workflow support
+- Parallel execution
+- Conditional routing
+- Retry management
+- Workflow recovery
+- Workflow history
 
 ---
 
-# 17. Architectural Patterns
+## Business Capabilities
 
-The solution adopts multiple architectural patterns.
+The Workflow Layer supports:
 
-## Layered Architecture
+- Business process automation
+- AI workflow execution
+- Human approval workflows
+- Multi-step orchestration
+- Parallel task execution
+- Event-driven workflow execution
 
-Separates responsibilities into independent architectural layers.
+---
+
+## Workflow Lifecycle
+
+```text
+Workflow Definition
+          │
+          ▼
+Execution Planning
+          │
+          ▼
+Task Scheduling
+          │
+          ▼
+Task Execution
+          │
+          ▼
+State Update
+          │
+          ▼
+Completion
+          │
+          ▼
+Audit History
+```
+
+---
+
+## Design Principles
+
+The Workflow Layer shall:
+
+- Maintain execution state independently.
+- Support resumable workflows.
+- Support long-running business processes.
+- Isolate workflow failures.
+- Support reusable workflow definitions.
+- Coordinate business capabilities rather than implementing them.
+
+---
+
+## Relationships
+
+The Workflow Layer collaborates with:
+
+- AI Orchestration Layer
+- Enterprise Knowledge Layer
+- Enterprise Integration Layer
+- Monitoring Services
+- AI Governance
+
+---
+
+# 16. Enterprise Integration Layer
+
+## Purpose
+
+The Enterprise Integration Layer provides standardized access to enterprise applications, external systems, and business services.
+
+It isolates business capabilities from external implementation details.
+
+---
+
+## Responsibilities
+
+The Enterprise Integration Layer is responsible for:
+
+- Enterprise connectivity
+- External service invocation
+- Tool discovery
+- Tool execution
+- Integration governance
+- Protocol translation
+- Error normalization
+- Integration security
+
+---
+
+## Business Capabilities
+
+The layer supports:
+
+- Enterprise application integration
+- External API integration
+- Business system connectivity
+- Enterprise tool execution
+- Service orchestration
+
+---
+
+## Integration Principles
+
+Enterprise integrations shall:
+
+- Expose stable interfaces.
+- Hide implementation complexity.
+- Support secure communication.
+- Validate authorization.
+- Maintain execution traceability.
+- Support future integrations without architectural redesign.
+
+---
+
+## Integration Pattern
+
+```text
+Business Capability
+         │
+         ▼
+Enterprise Integration Layer
+         │
+         ▼
+Integration Adapter
+         │
+         ▼
+Enterprise Application
+```
+
+---
+
+## Relationships
+
+The Enterprise Integration Layer collaborates with:
+
+- AI Orchestration Layer
+- Workflow Layer
+- AI Governance
+- Monitoring Services
+
+---
+
+# 17. Platform Services Layer
+
+## Purpose
+
+The Platform Services Layer provides shared enterprise capabilities that support all other architectural layers.
+
+These services are reusable and independent of specific business domains.
+
+---
+
+## Responsibilities
+
+Shared platform capabilities include:
+
+- Identity management
+- Configuration management
+- Logging
+- Monitoring
+- Audit logging
+- Notification services
+- Health monitoring
+- Secrets management
+- Scheduling
+- Caching
+- Operational metrics
+
+---
+
+## Design Principles
+
+Platform Services shall:
+
+- Be reusable.
+- Be centrally governed.
+- Minimize duplication.
+- Support independent evolution.
+- Expose stable interfaces.
+- Remain independent of business capabilities.
+
+---
+
+## Relationships
+
+Platform Services support:
+
+- Presentation Layer
+- API Layer
+- Application Layer
+- AI Orchestration Layer
+- Workflow Layer
+- Enterprise Knowledge Layer
+- Enterprise Integration Layer
+
+---
+
+# 18. Cross-Cutting Concerns
+
+Certain architectural capabilities apply consistently across all layers of the Enterprise AI Orchestration Platform.
+
+---
+
+## Security
+
+Provides:
+
+- Authentication
+- Authorization
+- Session management
+- Encryption
+- Audit logging
+
+---
+
+## Configuration Management
+
+Provides:
+
+- Centralized configuration
+- Environment-specific configuration
+- Feature management
+
+---
+
+## Logging
+
+Provides:
+
+- Structured logging
+- Operational diagnostics
+- Audit events
+
+---
+
+## Monitoring
+
+Provides:
+
+- Metrics
+- Health monitoring
+- Alerting
+- Operational dashboards
+
+---
+
+## Observability
+
+Provides:
+
+- Request tracing
+- Performance monitoring
+- Workflow visibility
+- AI execution visibility
+
+---
+
+## Exception Handling
+
+Provides:
+
+- Standardized error handling
+- Error categorization
+- Recovery guidance
+
+---
+
+## Governance
+
+Provides:
+
+- AI governance
+- Policy enforcement
+- Prompt governance
+- Compliance validation
+
+---
+
+## Quality Assurance
+
+Provides:
+
+- Validation
+- Testing support
+- Performance measurement
+- Operational readiness
+
+---
+
+# 19. End-to-End Request Flow
+
+The following sequence illustrates how an enterprise request flows through the solution architecture.
+
+```text
+User
+ │
+ ▼
+Presentation Layer
+ │
+ ▼
+API Layer
+ │
+ ▼
+Application Layer
+ │
+ ▼
+AI Orchestration
+ │
+ ▼
+Intent Analysis
+ │
+ ▼
+Execution Planning
+ │
+ ├──────────────┬──────────────────┐
+ ▼              ▼                  ▼
+Knowledge   Workflow        Enterprise
+Services     Layer          Integration
+ │              │                  │
+ └──────────────┼──────────────────┘
+                ▼
+      Response Validation
+                │
+                ▼
+     Response Composition
+                │
+                ▼
+      Streaming Response
+                │
+                ▼
+              User
+```
+
+---
+
+## Request Lifecycle
+
+A typical enterprise request proceeds through the following stages:
+
+1. User authentication.
+2. Request validation.
+3. Conversation context retrieval.
+4. Intent analysis.
+5. Execution planning.
+6. Knowledge retrieval.
+7. Workflow execution.
+8. Enterprise integration (if required).
+9. Response validation.
+10. Response composition.
+11. Streaming response delivery.
+12. Audit recording.
+13. Operational metrics collection.
+
+---
+
+# 20. Component Interaction Patterns
+
+The solution architecture employs several interaction patterns to support modularity, scalability, and maintainability.
+
+---
+
+## Request–Response
+
+Used for:
+
+- User requests
+- Administrative operations
+- Configuration services
+- Standard business APIs
+
+Characteristics:
+
+- Synchronous
+- Immediate response
+- Strong consistency
+
+---
+
+## Orchestration
+
+Used for:
+
+- AI agent collaboration
+- Workflow coordination
+- Multi-step business execution
+
+Characteristics:
+
+- Centralized coordination
+- Stateful execution
+- Controlled sequencing
+
+---
+
+## Event-Driven Communication
+
+Used for:
+
+- Workflow completion
+- Audit events
+- Monitoring events
+- Notification triggers
+
+Characteristics:
+
+- Loose coupling
+- Asynchronous processing
+- Improved scalability
+
+---
+
+## Enterprise Integration
+
+Used for:
+
+- Business application invocation
+- External service communication
+- Enterprise capability execution
+
+Characteristics:
+
+- Service abstraction
+- Error isolation
+- Secure communication
+
+---
+
+## Knowledge Retrieval
+
+Used for:
+
+- Enterprise search
+- Citation generation
+- AI grounding
+- Context enrichment
+
+Characteristics:
+
+- Context-aware retrieval
+- Traceable information
+- Reusable knowledge services
+
+---
+
+# 21. Layer Dependency Rules
+
+To preserve architectural integrity, dependencies between layers shall follow these rules.
+
+| Layer | May Depend On |
+|--------|---------------|
+| Presentation | API Layer |
+| API | Application Layer |
+| Application | Domain Services |
+| AI Orchestration | Knowledge, Workflow, Integration |
+| Workflow | Domain Services |
+| Enterprise Knowledge | Domain Services |
+| Enterprise Integration | Platform Services |
+| Platform Services | Infrastructure Services |
+
+General rules:
+
+- Dependencies shall point toward business capabilities.
+- Lower layers shall not depend on presentation concerns.
+- Business logic shall remain independent of infrastructure.
+- Cross-layer shortcuts are prohibited.
+- Communication shall occur through published interfaces.
+
+---
+# 22. Technology Mapping
+
+The Solution Architecture defines the logical organization of the platform. The Technology Architecture specifies the implementation technologies used to realize each architectural capability.
+
+The following mapping provides traceability between logical architecture and implementation technologies.
+
+| Architectural Capability | Technology Category |
+|---------------------------|---------------------|
+| Presentation Services | Web Application Framework |
+| API Services | REST API Framework |
+| Application Services | Application Runtime |
+| AI Orchestration | AI Workflow Orchestration Framework |
+| Enterprise Knowledge | Document Processing & Knowledge Retrieval |
+| Enterprise Integration | Enterprise Integration Framework |
+| Workflow Management | Workflow Orchestration Engine |
+| Authentication | Identity & Access Management |
+| Conversation Storage | Session & Conversation Repository |
+| Document Storage | Enterprise Object Storage |
+| Vector Search | Vector Database |
+| Keyword Search | Lexical Search Engine |
+| AI Models | Enterprise LLM Provider |
+| Embedding Models | Embedding Service |
+| Monitoring | Observability Platform |
+| Logging | Centralized Logging |
+| Configuration | Configuration Management |
+| Deployment | Container Platform |
+
+The specific technology selections are documented in the **Technology Architecture**.
+
+---
+
+# 23. Quality Attribute Realization
+
+The architecture realizes the quality attributes defined in the Non-Functional Requirements through specific architectural mechanisms.
+
+| Quality Attribute | Architectural Mechanism |
+|-------------------|-------------------------|
+| Performance | Efficient request processing, optimized retrieval, streaming responses |
+| Scalability | Stateless services, independent scaling of platform capabilities |
+| Availability | Redundant services, graceful degradation, health monitoring |
+| Reliability | Workflow state management, retry policies, failure isolation |
+| Security | Authentication, authorization, encryption, audit logging |
+| Maintainability | Layered architecture, Domain-Driven Design, Clean Architecture |
+| Modularity | Bounded contexts and explicit service interfaces |
+| Extensibility | Pluggable AI capabilities and integration abstractions |
+| Observability | Structured logging, metrics, tracing, health endpoints |
+| Portability | Containerized deployment and externalized configuration |
+| AI Quality | Knowledge grounding, citation support, response validation |
+| Governance | Policy enforcement, auditability, traceability |
+
+The architectural mechanisms supporting each quality attribute are further detailed in the Non-Functional Requirements and Technology Architecture.
+
+---
+
+# 24. Architectural Patterns
+
+The solution architecture combines several complementary architectural patterns.
+
+---
+
+## 24.1 Layered Architecture
+
+Responsibilities are separated into logical layers with clearly defined interfaces.
 
 Benefits:
 
-* Maintainability
-* Separation of concerns
-* Independent evolution
+- Separation of concerns
+- Maintainability
+- Technology independence
+- Clear dependency management
 
 ---
 
-## Domain-Driven Design (DDD)
+## 24.2 Domain-Driven Design (DDD)
 
-Organizes the platform around business domains rather than technical modules.
+Business capabilities define architectural boundaries through bounded contexts.
 
 Benefits:
 
-* High cohesion
-* Explicit business boundaries
-* Reduced coupling
+- High cohesion
+- Loose coupling
+- Clear ownership
+- Business alignment
 
 ---
 
-## Microservice-Ready Modular Architecture
+## 24.3 Clean Architecture
 
-Although initially deployed as a modular monolith, the architecture allows future decomposition into independently deployable services.
-
-Potential future services include:
-
-* Knowledge Service
-* Agent Service
-* MCP Gateway
-* Administration Service
-* Conversation Service
-
----
-
-## Supervisor Pattern
-
-LangGraph Supervisor coordinates specialized AI agents.
+Business rules remain independent of infrastructure technologies.
 
 Benefits:
 
-* Flexible orchestration
-* Easier scalability
-* Clear responsibility boundaries
+- Testability
+- Long-term maintainability
+- Technology flexibility
 
 ---
 
-## Tool Abstraction Pattern
+## 24.4 AI Orchestration Pattern
 
-Enterprise tools are abstracted behind MCP.
+A central orchestration capability coordinates specialized AI components to fulfill complex enterprise requests.
 
 Benefits:
 
-* Standardized integrations
-* Reduced vendor lock-in
-* Easier extension
+- Intelligent task coordination
+- Modular AI capabilities
+- Flexible execution planning
+- Explainable workflows
 
 ---
 
-## Retrieval-Augmented Generation (RAG)
+## 24.5 Enterprise Knowledge Pattern
 
-Enterprise knowledge retrieval is implemented as a reusable platform capability.
+Enterprise knowledge is managed as a reusable platform capability independent of AI model implementations.
 
 Benefits:
 
-* Grounded responses
-* Reduced hallucinations
-* Explainability
+- Knowledge reuse
+- Consistent retrieval
+- Grounded AI responses
+- Citation support
 
 ---
 
-# 18. Quality Attribute Realization
+## 24.6 Integration Abstraction Pattern
 
-| Quality Attribute | Architectural Mechanism                |
-| ----------------- | -------------------------------------- |
-| Scalability       | Cloud Run auto-scaling, stateless APIs |
-| Availability      | Managed Google Cloud services          |
-| Security          | Firebase Auth, RBAC, Secret Manager    |
-| Reliability       | Workflow state management, retries     |
-| Maintainability   | Clean Architecture, DDD                |
-| Extensibility     | LangGraph, MCP, modular services       |
-| Performance       | Hybrid retrieval, vector search        |
-| Observability     | Cloud Logging, Monitoring, metrics     |
-| Governance        | Prompt governance, audit logging       |
-| Explainability    | Citation service                       |
+External systems are accessed through standardized integration interfaces.
+
+Benefits:
+
+- Reduced coupling
+- Easier onboarding of new systems
+- Improved maintainability
+- Vendor independence
 
 ---
 
-# 19. Major Architectural Decisions
+## 24.7 Event-Ready Architecture
 
-| Decision               | Rationale                                                       |
-| ---------------------- | --------------------------------------------------------------- |
-| Google Cloud selected  | Strong Vertex AI ecosystem and managed services                 |
-| FastAPI selected       | High performance and excellent API ecosystem                    |
-| LangGraph selected     | Native support for multi-agent orchestration and workflow state |
-| MCP selected           | Standardized enterprise tool integration                        |
-| Qdrant selected        | High-performance vector database with metadata filtering        |
-| Firestore selected     | Managed NoSQL database for conversations and metadata           |
-| Cloud Storage selected | Durable enterprise document repository                          |
-| Cloud Run selected     | Serverless deployment with automatic scaling                    |
-| Docker selected        | Portable and reproducible deployments                           |
+The platform supports event-driven collaboration where asynchronous processing provides business value.
 
-Detailed rationale for each significant decision shall be maintained as an Architecture Decision Record (ADR).
+Benefits:
+
+- Loose coupling
+- Improved scalability
+- Resilient workflows
+- Future extensibility
 
 ---
 
-# 20. Risks and Trade-offs
+# 25. Major Architectural Decisions
 
-| Risk                         | Mitigation                                   |
-| ---------------------------- | -------------------------------------------- |
-| LLM latency                  | Streaming responses, prompt optimization     |
-| Model hallucinations         | Hybrid retrieval, citations, reviewer agent  |
-| Tool execution failures      | Retry strategy and graceful degradation      |
-| Vendor dependency            | Service abstraction and modular architecture |
-| Workflow complexity          | LangGraph state management                   |
-| Increasing operational costs | Monitoring, caching, model selection         |
-| AI governance changes        | Modular governance framework                 |
+The following architectural decisions shape the overall solution.
 
----
+| Decision | Rationale |
+|----------|-----------|
+| Business capability–driven architecture | Align architecture with business domains |
+| Domain-Driven Design | Define clear ownership and bounded contexts |
+| Layered Architecture | Separate concerns and improve maintainability |
+| Clean Architecture | Isolate business logic from infrastructure |
+| API-First design | Standardize platform interactions |
+| Central AI orchestration | Coordinate intelligent business capabilities |
+| Enterprise Knowledge as a shared capability | Promote knowledge reuse and consistency |
+| Integration abstraction | Simplify enterprise connectivity |
+| Cross-cutting governance | Apply security and governance consistently |
+| Cloud-native deployment principles | Improve scalability and operational efficiency |
 
-# 21. Future Evolution
-
-The architecture is intentionally designed for incremental enhancement.
-
-Planned future capabilities include:
-
-* Autonomous multi-agent collaboration
-* Enterprise knowledge graph
-* Multi-modal AI (text, image, audio, video)
-* AI evaluation framework
-* Human approval workflows
-* Event-driven workflow execution
-* Additional MCP servers
-* Multi-cloud deployment
-* Enterprise policy engine
-* Agent marketplace
-* Federated enterprise search
-* Semantic caching
-* Advanced observability dashboards
-
-The modular architecture enables these capabilities without requiring significant redesign.
+Detailed implementation decisions shall be documented through Architecture Decision Records (ADRs).
 
 ---
 
-# 22. Architecture Traceability
+# 26. Risks and Trade-offs
 
-The Solution Architecture realizes the following architectural artifacts:
+The architecture intentionally balances flexibility, complexity, and operational efficiency.
 
-| Architecture Artifact       | Relationship                              |
-| --------------------------- | ----------------------------------------- |
-| Product Vision              | Defines platform direction                |
-| Business Requirements       | Defines business capabilities             |
-| Functional Requirements     | Defines platform functions                |
-| Domain Model                | Defines business entities                 |
-| Context Map                 | Defines bounded contexts                  |
-| Non-Functional Requirements | Defines quality attributes                |
-| Technology Architecture     | Maps logical architecture to technologies |
-| Deployment Architecture     | Maps components to runtime infrastructure |
-| Security Architecture       | Defines security controls                 |
-| Data Architecture           | Defines enterprise data model             |
-| API Architecture            | Defines service interfaces                |
-| AI Governance               | Defines governance policies               |
+| Architectural Consideration | Mitigation Strategy |
+|-----------------------------|---------------------|
+| AI response latency | Streaming responses and optimized execution planning |
+| Increasing workflow complexity | Modular workflow design and orchestration |
+| Enterprise integration variability | Standardized integration interfaces |
+| Knowledge quality | Governance, metadata management, and validation |
+| AI model evolution | Provider abstraction and configurable AI capabilities |
+| Platform growth | Modular architecture and bounded contexts |
+| Operational complexity | Comprehensive observability and automation |
+| Vendor dependency | Technology abstraction where practical |
+
+Architecture reviews shall periodically reassess these trade-offs as business priorities evolve.
 
 ---
 
-# 23. Architectural Assumptions
+# 27. Future Evolution
 
-The solution assumes:
+The architecture is designed for continuous evolution.
 
-* Google Cloud Platform is the primary deployment environment.
-* Gemini models are the initial LLM provider.
-* Enterprise integrations are exposed through MCP where practical.
-* Hybrid retrieval remains the preferred knowledge retrieval strategy.
-* Users interact primarily through a conversational interface.
-* AI agents operate under governance and human oversight where required.
+Potential future enhancements include:
 
-These assumptions shall be reviewed periodically and updated through Architecture Decision Records (ADRs) when necessary.
+- Autonomous AI collaboration
+- Multi-modal AI capabilities
+- Advanced planning and reasoning
+- Human-in-the-loop workflow approval
+- Enterprise knowledge graph integration
+- Semantic caching
+- Federated enterprise search
+- Advanced AI evaluation frameworks
+- Expanded enterprise integrations
+- Event-driven workflow execution
+- Multi-region deployment
+- Multi-cloud deployment
+- Policy-driven AI execution
+- Autonomous operational optimization
+
+The architecture intentionally separates business capabilities from implementation technologies to accommodate future innovation without significant redesign.
 
 ---
 
-# 24. Conclusion
+# 28. Architecture Traceability
 
-The Enterprise AI Orchestration Platform (EAOP) provides a modern, cloud-native reference architecture for enterprise AI systems.
+The Solution Architecture provides the logical realization of the project's architectural artifacts.
+
+| Architecture Artifact | Relationship |
+|-----------------------|--------------|
+| Product Vision | Defines strategic direction |
+| Business Requirements | Defines business capabilities |
+| Functional Requirements | Defines platform functionality |
+| Non-Functional Requirements | Defines quality objectives |
+| Domain Model | Defines business concepts |
+| Context Map | Defines bounded contexts |
+| Technology Architecture | Maps logical architecture to implementation technologies |
+| Deployment Architecture | Maps logical components to runtime environments |
+| Data Architecture | Defines information architecture |
+| Security Architecture | Defines security controls |
+| API Architecture & Integration Standards | Defines service contracts |
+| AI Governance & Responsible AI | Defines governance principles |
+| Implementation Roadmap | Defines implementation sequencing |
+
+The Solution Architecture serves as the central architectural reference linking business requirements to implementation.
+
+---
+
+# 29. Architectural Assumptions
+
+The architecture is based on the following assumptions.
+
+- Enterprise users interact primarily through conversational and administrative interfaces.
+- AI capabilities operate under defined governance policies.
+- Enterprise knowledge is managed as a trusted organizational asset.
+- Business capabilities evolve independently through bounded contexts.
+- Enterprise integrations are exposed through standardized interfaces.
+- Workflow execution supports both synchronous and asynchronous interactions.
+- Platform services provide shared enterprise capabilities.
+- Infrastructure supports cloud-native deployment characteristics.
+
+These assumptions shall be reviewed periodically as part of architecture governance.
+
+---
+
+# 30. Conclusion
+
+The Enterprise AI Orchestration Platform Solution Architecture establishes a scalable, modular, and maintainable foundation for enterprise AI adoption.
 
 The architecture combines:
 
-* LangGraph for intelligent multi-agent orchestration.
-* Retrieval-Augmented Generation (RAG) for trusted enterprise knowledge services.
-* Model Context Protocol (MCP) for standardized enterprise integrations.
-* Google Cloud for scalable, secure, and managed infrastructure.
-* Domain-Driven Design and Clean Architecture for long-term maintainability.
+- Business capability–driven design
+- Domain-Driven Design (DDD)
+- Clean Architecture
+- Layered Architecture
+- Intelligent AI orchestration
+- Enterprise knowledge management
+- Workflow management
+- Enterprise integration
+- Governance by design
+- Cloud-native architectural principles
 
-Unlike traditional AI chatbot solutions, the platform is architected as a reusable enterprise capability that separates orchestration, knowledge services, enterprise integration, governance, and infrastructure into independently evolving architectural domains.
+Unlike traditional AI chatbot or Retrieval-Augmented Generation (RAG) solutions, the Enterprise AI Orchestration Platform treats AI orchestration, enterprise knowledge, workflow management, and enterprise integration as reusable business capabilities that collectively enable intelligent enterprise applications.
 
-The architecture establishes a robust foundation for implementing intelligent enterprise applications while supporting future evolution toward autonomous agents, advanced workflow automation, multi-modal AI, and enterprise-scale AI governance.
+This architecture provides a robust foundation for implementing current business capabilities while supporting future evolution toward increasingly autonomous, explainable, and enterprise-governed AI systems.
+
+---

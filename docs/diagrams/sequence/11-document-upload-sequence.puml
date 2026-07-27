@@ -1,0 +1,57 @@
+@startuml
+title Document Upload Sequence
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+actor User
+
+participant "React UI" as UI
+participant "API Gateway" as Gateway
+participant "Document Service" as Document
+participant "Storage Service" as Storage
+database "Google Cloud Storage" as GCS
+database "Firestore Registry" as Registry
+participant "Ingestion Service" as Ingestion
+
+User -> UI : Select document
+activate UI
+
+UI -> Gateway : POST /documents
+activate Gateway
+
+Gateway -> Document : Upload document
+activate Document
+
+Document -> Storage : Store document
+activate Storage
+
+Storage -> GCS : Upload object
+activate GCS
+GCS --> Storage : Object URI
+deactivate GCS
+
+Storage --> Document : Storage location
+deactivate Storage
+
+Document -> Registry : Register metadata
+activate Registry
+Registry --> Document : Document ID
+deactivate Registry
+
+Document -> Ingestion : Start asynchronous ingestion
+activate Ingestion
+Ingestion --> Document : Accepted (202)
+deactivate Ingestion
+
+Document --> Gateway : Upload successful
+deactivate Document
+
+Gateway --> UI : 201 Created
+deactivate Gateway
+
+UI --> User : Upload completed
+
+deactivate UI
+
+@enduml

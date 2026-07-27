@@ -42,7 +42,7 @@ class CalculatorAgent(BaseAgent):
 
         return await self._tool.execute(
             ToolRequest(
-                input=expression,
+                action="calculate",
                 parameters=params.model_dump(),
             )
         )

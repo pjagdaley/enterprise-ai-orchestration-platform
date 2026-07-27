@@ -2,13 +2,13 @@
 
 '==============================================================================
 ' Enterprise AI Orchestration Platform
-' Container Architecture
+' C4 Model - Level 2 - Container Architecture
 '==============================================================================
 
 !theme plain
 
 title Enterprise AI Orchestration Platform
-title C4 Level 2 - Container Architecture
+title C4 Model - Level 2 - Container Architecture
 
 left to right direction
 
@@ -37,38 +37,34 @@ skinparam ArrowColor #404040
 package "Users" {
 
 actor "Business User" as BusinessUser
-
-actor "Platform Admin" as PlatformAdmin
-
-actor "AI Admin" as AIAdmin
+actor "Platform Administrator" as PlatformAdmin
+actor "AI Administrator" as AIAdmin
 
 }
 
 '==============================================================================
-' PRESENTATION
+' PRESENTATION LAYER
 '==============================================================================
 
 package "Presentation Layer" {
 
-rectangle "React Web Portal" as React
-
-rectangle "Business Chat UI" as Chat
-
-rectangle "Administration Portal" as AdminPortal
+rectangle "React Web Portal\n(TypeScript + Material UI)" as React
 
 }
 
 '==============================================================================
-' APPLICATION
+' APPLICATION LAYER
 '==============================================================================
 
 package "Application Layer" {
 
-rectangle "FastAPI Backend" as API
+rectangle "FastAPI Backend\n(API Gateway)" as API
 
 rectangle "Authentication Service" as Auth
 
 rectangle "Workflow Service" as Workflow
+
+rectangle "Document Service" as Document
 
 }
 
@@ -76,15 +72,9 @@ rectangle "Workflow Service" as Workflow
 ' AI ORCHESTRATION
 '==============================================================================
 
-package "AI Orchestration" {
+package "AI Orchestration Layer" {
 
 rectangle "LangGraph Runtime" as LangGraph
-
-rectangle "Planner Agent" as Planner
-
-rectangle "Supervisor Agent" as Supervisor
-
-rectangle "Worker Agents" as Workers
 
 rectangle "MCP Client" as MCP
 
@@ -96,7 +86,7 @@ rectangle "MCP Client" as MCP
 
 package "Vertex AI Services" {
 
-rectangle "Gemini Models" as Gemini
+rectangle "Gemini LLM" as Gemini
 
 rectangle "Embedding Models" as Embeddings
 
@@ -108,13 +98,13 @@ rectangle "Safety & Grounding" as Safety
 ' KNOWLEDGE PLATFORM
 '==============================================================================
 
-package "Enterprise Knowledge Platform" {
+package "Knowledge Platform" {
 
 database "Qdrant\nVector Database" as Qdrant
 
-database "Firestore\nMetadata Store" as Firestore
+database "Firestore\nMetadata Registry" as Firestore
 
-database "Google Cloud Storage" as GCS
+database "Google Cloud Storage\n(Document Repository)" as GCS
 
 }
 
@@ -124,7 +114,7 @@ database "Google Cloud Storage" as GCS
 
 package "Platform Services" {
 
-rectangle "IAM" as IAM
+rectangle "Cloud IAM" as IAM
 
 rectangle "Secret Manager" as Secrets
 
@@ -138,70 +128,60 @@ rectangle "Cloud Monitoring" as Monitoring
 ' EXTERNAL SYSTEMS
 '==============================================================================
 
-package "Enterprise Systems" {
+package "Enterprise Integrations" {
 
-rectangle "SharePoint" as SharePoint
+rectangle "Enterprise\nContent Sources" as Content
 
-rectangle "Google Drive" as Drive
+rectangle "Enterprise\nApplications" as Enterprise
 
-rectangle "GitHub" as GitHub
-
-rectangle "SAP" as SAP
-
-rectangle "Salesforce" as Salesforce
-
-rectangle "REST APIs" as APIs
+rectangle "External MCP\nServers" as MCPServers
 
 }
 
 '==============================================================================
-' USER FLOW
+' USER INTERACTION
 '==============================================================================
 
-BusinessUser --> Chat
+BusinessUser --> React : Uses
 
-PlatformAdmin --> AdminPortal
+PlatformAdmin --> React : Administers
 
-AIAdmin --> AdminPortal
+AIAdmin --> React : Configures
 
-Chat --> React
+React --> API : REST / HTTPS
 
-AdminPortal --> React
-
-React --> API
+'==============================================================================
+' APPLICATION FLOW
+'==============================================================================
 
 API --> Auth
 
 API --> Workflow
 
+API --> Document
+
 Workflow --> LangGraph
 
-'==============================================================================
-' AGENT FLOW
-'==============================================================================
+Workflow --> MCP
 
-LangGraph --> Planner
+Workflow --> Gemini
 
-LangGraph --> Supervisor
+Workflow --> Embeddings
 
-LangGraph --> Workers
+Workflow --> Safety
 
-Supervisor --> MCP
+Workflow --> Qdrant
 
-Workers --> Gemini
+Workflow --> Firestore
 
-Workers --> Embeddings
+Document --> GCS
 
-Workers --> Safety
+Document --> Firestore
 
-Workers --> Qdrant
-
-Workers --> Firestore
-
-Workers --> GCS
+Document --> Qdrant
 
 '==============================================================================
-' PLATFORM
+' PLATFORM SERVICES
 '==============================================================================
 
 API --> IAM
@@ -213,19 +193,13 @@ API --> Logging
 API --> Monitoring
 
 '==============================================================================
-' ENTERPRISE
+' EXTERNAL INTEGRATIONS
 '==============================================================================
 
-SharePoint --> GCS
+Content --> GCS : Document Ingestion
 
-Drive --> GCS
+Enterprise --> API : Business APIs
 
-GitHub --> GCS
-
-SAP --> API
-
-Salesforce --> API
-
-APIs --> API
+MCP --> MCPServers : Tool Invocation
 
 @enduml

@@ -43,7 +43,7 @@ class GitTool(BaseTool):
         """
         Execute a Git MCP tool.
 
-        request.input:
+        request.action:
             Git MCP tool name
             Examples:
                 git_status
@@ -59,7 +59,7 @@ class GitTool(BaseTool):
 
         logger.info(
             "Executing Git MCP tool='%s' with parameters=%s",
-            request.input,
+            request.action,
             request.parameters,
         )
 
@@ -70,7 +70,7 @@ class GitTool(BaseTool):
         arguments["repo_path"] = self._repo_path
 
         response = await self._mcp_service.execute_tool(
-            tool_name=request.input,
+            tool_name=request.action,
             arguments=arguments,
         )
 

@@ -2,13 +2,13 @@
 
 '==============================================================================
 ' Enterprise AI Orchestration Platform
-' Agent Runtime Architecture
+' AI Orchestration Runtime Architecture
 '==============================================================================
 
 !theme plain
 
 title Enterprise AI Orchestration Platform
-title AI Orchestration Runtime
+title AI Orchestration Runtime Architecture
 
 left to right direction
 
@@ -37,22 +37,34 @@ skinparam ArrowColor #404040
 rectangle "Workflow Service" as Workflow
 
 '==============================================================================
-' LANGGRAPH
+' LANGGRAPH RUNTIME
 '==============================================================================
 
 package "LangGraph Runtime" {
 
-rectangle "Planning Engine" as Planner
+rectangle "Planner Agent" as Planner
 
 rectangle "Supervisor Agent" as Supervisor
 
-rectangle "Worker Agent Pool" as Workers
+rectangle "Task Router" as Router
 
-rectangle "Memory Manager" as Memory
+rectangle "Specialized Agents" as Agents
 
-rectangle "Routing Engine" as Router
+rectangle "Conversation Memory" as Memory
 
-rectangle "State Manager" as State
+rectangle "Workflow State" as State
+
+}
+
+'==============================================================================
+' KNOWLEDGE SERVICES
+'==============================================================================
+
+package "Knowledge Services" {
+
+rectangle "Search Service" as Search
+
+rectangle "Citation Service" as Citation
 
 }
 
@@ -69,22 +81,14 @@ rectangle "Tool Registry" as Registry
 }
 
 '==============================================================================
-' TOOLS
+' EXTERNAL TOOLS
 '==============================================================================
 
-package "Enterprise Tools" {
+package "Enterprise Tool Ecosystem" {
 
-rectangle "Knowledge Search"
+rectangle "External MCP Servers" as MCPServers
 
-rectangle "SAP Connector"
-
-rectangle "Salesforce Connector"
-
-rectangle "REST API Connector"
-
-rectangle "Email Tool"
-
-rectangle "Document Tool"
+rectangle "Enterprise Applications" as EnterpriseApps
 
 }
 
@@ -94,25 +98,25 @@ rectangle "Document Tool"
 
 package "Vertex AI" {
 
-rectangle "Gemini"
+rectangle "Gemini LLM" as Gemini
 
-rectangle "Embedding"
+rectangle "Embedding Models" as Embedding
 
-rectangle "Safety"
+rectangle "Safety & Grounding" as Safety
 
 }
 
 '==============================================================================
-' KNOWLEDGE
+' KNOWLEDGE PLATFORM
 '==============================================================================
 
 package "Knowledge Platform" {
 
-database "Qdrant"
+database "Qdrant" as Qdrant
 
-database "Firestore"
+database "Firestore" as Firestore
 
-database "Cloud Storage"
+database "Google Cloud Storage" as GCS
 
 }
 
@@ -126,38 +130,36 @@ Planner --> Supervisor
 
 Supervisor --> Router
 
-Router --> Workers
+Router --> Agents
 
-Workers --> Memory
+Agents --> Memory
 
-Workers --> State
+Agents --> State
 
-Workers --> Gemini
+Agents --> Gemini
 
-Workers --> Embedding
+Agents --> Embedding
 
-Workers --> Safety
+Agents --> Safety
 
-Workers --> MCP
+Agents --> Search
+
+Search --> Qdrant
+
+Search --> Firestore
+
+Search --> Citation
+
+Citation --> Gemini
+
+Agents --> MCP
 
 MCP --> Registry
 
-Registry --> "Knowledge Search"
+Registry --> MCPServers
 
-Registry --> "SAP Connector"
+Registry --> EnterpriseApps
 
-Registry --> "Salesforce Connector"
-
-Registry --> "REST API Connector"
-
-Registry --> "Email Tool"
-
-Registry --> "Document Tool"
-
-Workers --> Qdrant
-
-Workers --> Firestore
-
-Workers --> "Cloud Storage"
+Agents --> GCS
 
 @enduml

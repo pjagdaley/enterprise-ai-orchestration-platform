@@ -14,9 +14,9 @@ class ToolRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    input: str = Field(
+    action: str = Field(
         ...,
-        description="Tool input."
+        description="Tool action."
     )
 
     parameters: dict[str, Any] = Field(

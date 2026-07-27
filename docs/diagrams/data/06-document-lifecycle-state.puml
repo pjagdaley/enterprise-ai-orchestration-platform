@@ -1,0 +1,39 @@
+@startuml
+title Document Lifecycle State Diagram
+
+skinparam shadowing false
+skinparam state {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+[*] --> Uploaded
+
+Uploaded --> Registered : Metadata Stored
+
+Registered --> Validating : Validate Document
+
+Validating --> Processing : Validation Passed
+Validating --> Rejected : Invalid Format
+
+Processing --> Chunking : Parse Document
+
+Chunking --> Embedding : Generate Embeddings
+
+Embedding --> Indexed : Store in Qdrant
+
+Indexed --> Available : Ready for Search
+
+Available --> Updating : New Version Uploaded
+Updating --> Processing : Re-ingest Document
+
+Available --> Archived : Retention Policy
+
+Archived --> Deleted : Permanent Removal
+
+Rejected --> Deleted
+
+Deleted --> [*]
+
+@enduml

@@ -45,8 +45,14 @@ class PostgreSQLTool(BaseTool):
         Execute a PostgreSQL MCP tool.
         """
 
+        logger.info(
+            "Executing PostgreSQL action='%s' parameters=%s",
+            request.action,
+            request.parameters,
+        )
+
         response = await self._mcp_service.execute_tool(
-            tool_name=request.input,
+            tool_name=request.action,
             arguments=request.parameters or {},
         )
 

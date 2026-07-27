@@ -1,0 +1,40 @@
+@startuml
+title Agent Lifecycle State Diagram
+
+skinparam shadowing false
+skinparam state {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+[*] --> Idle
+
+Idle --> Assigned : Task Assigned
+
+Assigned --> Initializing : Load Configuration
+
+Initializing --> Ready : Initialization Complete
+Initializing --> Failed : Initialization Error
+
+Ready --> Executing : Start Task
+
+Executing --> WaitingForKnowledge : Knowledge Required
+WaitingForKnowledge --> Executing : Context Retrieved
+
+Executing --> WaitingForTool : Tool Invocation
+WaitingForTool --> Executing : Tool Response
+
+Executing --> WaitingForUser : User Input Required
+WaitingForUser --> Executing : User Responded
+
+Executing --> Completed : Task Finished
+Executing --> Failed : Execution Error
+
+Failed --> Retrying : Retry Allowed
+Retrying --> Executing : Retry Successful
+Retrying --> Failed : Retry Limit Exceeded
+
+Completed --> Idle : Ready for Next Task
+
+@enduml

@@ -1,0 +1,467 @@
+# ADR-0012: Adopt Clean Architecture
+
+- **Status:** Accepted
+- **Date:** 2026-07-13
+- **Decision Makers:** Enterprise Architecture Team
+- **Related Documents:**
+  - Architecture Overview
+  - Technology Architecture
+  - AI-007 Agent Architecture
+  - AI-008 LangGraph Orchestration
+
+---
+
+# Context
+
+The Enterprise AI Orchestration Platform is a long-lived enterprise system that integrates multiple technologies and external services, including:
+
+- FastAPI
+- LangGraph
+- Google Gemini
+- Vertex AI
+- Firestore
+- Qdrant
+- OpenSearch
+- Google Cloud Storage
+- Model Context Protocol (MCP)
+- Enterprise APIs
+
+The platform is expected to evolve over several years. During its lifetime, infrastructure components, AI models, cloud services, databases, and deployment platforms may change.
+
+The architecture must therefore:
+
+- Isolate business rules from technology choices
+- Support independent evolution of components
+- Improve maintainability
+- Enable comprehensive testing
+- Reduce coupling
+- Simplify replacement of infrastructure technologies
+
+A software architecture that enforces clear separation of concerns is required.
+
+---
+
+# Decision
+
+The platform adopts **Clean Architecture** as its primary architectural style.
+
+Business rules remain independent of:
+
+- Frameworks
+- Databases
+- Cloud providers
+- AI models
+- External APIs
+- User interfaces
+
+Dependencies always point inward toward the business domain.
+
+Infrastructure components implement interfaces defined by the application or domain layers.
+
+---
+
+# Architecture Overview
+
+```text
+                +----------------------+
+                |      API Layer       |
+                |  FastAPI Endpoints   |
+                +----------+-----------+
+                           |
+                           ▼
+                +----------------------+
+                |  Application Layer   |
+                | Use Cases & Services |
+                +----------+-----------+
+                           |
+                           ▼
+                +----------------------+
+                |    Domain Layer      |
+                | Business Rules       |
+                | Entities             |
+                | Interfaces           |
+                +----------▲-----------+
+                           |
+                +----------+-----------+
+                | Infrastructure Layer |
+                | Firestore            |
+                | Qdrant               |
+                | OpenSearch           |
+                | Gemini               |
+                | MCP                  |
+                +----------------------+
+```
+
+---
+
+# Layer Responsibilities
+
+## API Layer
+
+The API layer is responsible for interacting with external clients.
+
+Responsibilities include:
+
+- HTTP endpoints
+- Request validation
+- Authentication
+- Authorization
+- Response generation
+- API documentation
+
+Examples
+
+- FastAPI Routers
+- Request DTOs
+- Response DTOs
+
+The API layer contains no business logic.
+
+---
+
+## Application Layer
+
+The Application layer coordinates business use cases.
+
+Responsibilities include:
+
+- Use case execution
+- Workflow orchestration
+- Service coordination
+- Transaction boundaries
+- Validation
+- Calling domain services
+- Coordinating infrastructure services
+
+Examples
+
+- Chat Service
+- Document Service
+- Workflow Service
+- Agent Service
+
+The Application layer defines interfaces that are implemented by Infrastructure.
+
+---
+
+## Domain Layer
+
+The Domain layer contains the core business logic.
+
+Responsibilities include:
+
+- Entities
+- Value Objects
+- Domain Services
+- Business Rules
+- Domain Interfaces
+- Business Policies
+
+Examples
+
+- Document
+- Agent
+- Workflow
+- Tool
+- ExecutionState
+
+The Domain layer has no dependencies on external frameworks.
+
+---
+
+## Infrastructure Layer
+
+The Infrastructure layer contains technology-specific implementations.
+
+Responsibilities include:
+
+- Firestore Repository
+- Qdrant Client
+- OpenSearch Client
+- Gemini Client
+- Vertex AI Integration
+- Google Cloud Storage
+- MCP Clients
+- External APIs
+
+Infrastructure implements interfaces defined by higher layers.
+
+---
+
+# Dependency Rule
+
+Dependencies always point inward.
+
+```text
+FastAPI
+     │
+     ▼
+Application
+     │
+     ▼
+Domain
+
+Infrastructure
+     │
+     └──────────────► Implements Interfaces
+```
+
+The Domain layer must never depend upon:
+
+- FastAPI
+- Firestore
+- LangGraph
+- Gemini SDK
+- Vertex AI SDK
+- Qdrant Client
+- OpenSearch Client
+- Cloud SDKs
+
+---
+
+# Project Structure
+
+The project structure reflects the Clean Architecture principles.
+
+```text
+app/
+
+├── api/
+│   ├── routers/
+│   ├── dto/
+│   └── dependencies/
+│
+├── application/
+│   ├── services/
+│   ├── use_cases/
+│   └── interfaces/
+│
+├── domain/
+│   ├── entities/
+│   ├── value_objects/
+│   ├── repositories/
+│   ├── services/
+│   └── exceptions/
+│
+├── infrastructure/
+│   ├── firestore/
+│   ├── qdrant/
+│   ├── opensearch/
+│   ├── storage/
+│   ├── llm/
+│   └── mcp/
+│
+├── bootstrap/
+│
+└── core/
+```
+
+---
+
+# Benefits
+
+The architecture provides:
+
+## Separation of Concerns
+
+Each layer has clearly defined responsibilities.
+
+---
+
+## Testability
+
+Business logic can be tested without:
+
+- Firestore
+- Qdrant
+- Gemini
+- OpenSearch
+- Cloud infrastructure
+
+Infrastructure dependencies can be mocked.
+
+---
+
+## Maintainability
+
+Business logic remains isolated from implementation details.
+
+Infrastructure changes rarely affect domain logic.
+
+---
+
+## Flexibility
+
+Technology can be replaced with minimal impact.
+
+Examples include replacing:
+
+- Gemini → Claude
+- Firestore → PostgreSQL
+- Qdrant → Pinecone
+- OpenSearch → Elasticsearch
+
+without changing business rules.
+
+---
+
+## Scalability
+
+Individual infrastructure components can evolve independently.
+
+Examples
+
+- New retrieval engines
+- New AI models
+- Additional MCP servers
+- Alternative storage providers
+
+---
+
+# Alternatives Considered
+
+## Traditional Layered Architecture
+
+```text
+Controller
+
+↓
+
+Service
+
+↓
+
+Repository
+
+↓
+
+Database
+```
+
+Advantages
+
+- Simple
+- Familiar
+- Easy to understand
+
+Disadvantages
+
+- High coupling
+- Business logic leaks into controllers
+- Difficult technology replacement
+
+Decision
+
+Not selected.
+
+---
+
+## Monolithic Service Architecture
+
+Advantages
+
+- Rapid initial development
+
+Disadvantages
+
+- Poor maintainability
+- Limited scalability
+- Difficult testing
+
+Decision
+
+Not selected.
+
+---
+
+## Hexagonal Architecture
+
+Advantages
+
+- Excellent isolation
+- Strong abstraction
+
+Disadvantages
+
+- Additional complexity
+- More interfaces
+
+Decision
+
+Clean Architecture is adopted while applying Ports and Adapters principles where appropriate.
+
+---
+
+# Consequences
+
+## Positive
+
+- Clear architectural boundaries
+- Easier testing
+- Better maintainability
+- Framework independence
+- Cloud independence
+- AI model independence
+- Easier onboarding of developers
+- Better long-term evolution
+
+---
+
+## Negative
+
+- More project structure
+- Additional abstraction
+- More interfaces
+- Slightly steeper learning curve
+
+---
+
+# Risks
+
+Potential risks include:
+
+- Excessive abstraction
+- Over-engineering
+- Interface proliferation
+- Increased development effort for simple features
+
+These risks should be managed by applying abstraction only where it provides long-term value.
+
+---
+
+# Architecture Impact
+
+This decision affects every major component of the platform, including:
+
+- API design
+- Dependency injection
+- Service implementation
+- Repository design
+- AI integration
+- Tool integration
+- MCP architecture
+- Testing strategy
+- Deployment
+
+All new features should conform to the established architectural boundaries.
+
+---
+
+# Review
+
+This decision should be reviewed if:
+
+- Platform requirements fundamentally change
+- Architectural complexity outweighs benefits
+- A different architectural style better supports future business needs
+
+---
+
+# References
+
+- Robert C. Martin – Clean Architecture
+- The Clean Architecture Blog Series
+- Platform Architecture Documentation
+- AI Architecture Documentation
+- Service Documentation
+- Workflow Documentation

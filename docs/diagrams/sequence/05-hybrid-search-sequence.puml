@@ -1,0 +1,63 @@
+@startuml
+title Hybrid Search Sequence
+
+actor User
+
+participant "Chat Service" as Chat
+participant "Workflow Service" as Workflow
+participant "Search Service" as Search
+participant "Embedding Service" as Embedding
+database "Qdrant" as Qdrant
+database "BM25 Index" as BM25
+participant "CrossEncoder\nReranker" as Reranker
+participant "Citation Service" as Citation
+
+User -> Chat : Ask Question
+activate Chat
+
+Chat -> Workflow : Process Query
+activate Workflow
+
+Workflow -> Search : Search(query)
+activate Search
+
+Search -> Embedding : Generate Query Embedding
+activate Embedding
+Embedding --> Search : Query Vector
+deactivate Embedding
+
+par Semantic Search
+    Search -> Qdrant : Vector Search
+    activate Qdrant
+    Qdrant --> Search : Top Semantic Results
+    deactivate Qdrant
+else Keyword Search
+    Search -> BM25 : Keyword Search
+    activate BM25
+    BM25 --> Search : Top Keyword Results
+    deactivate BM25
+end
+
+Search -> Search : Merge Results
+
+Search -> Reranker : Rerank Candidates
+activate Reranker
+Reranker --> Search : Ranked Results
+deactivate Reranker
+
+Search -> Citation : Generate Citations
+activate Citation
+Citation --> Search : Citation Metadata
+deactivate Citation
+
+Search --> Workflow : Search Response
+deactivate Search
+
+Workflow --> Chat : Context + Citations
+deactivate Workflow
+
+Chat --> User : AI Response
+
+deactivate Chat
+
+@enduml

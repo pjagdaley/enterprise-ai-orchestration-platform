@@ -34,7 +34,9 @@ class CalculatorTool(BaseTool):
         """
 
         try:
-            result = self._evaluate(request.input)
+
+            expression = request.parameters["expression"]
+            result = self._evaluate(expression)
 
             return ToolResponse(
                 success=True,

@@ -31,21 +31,23 @@ rectangle "FastAPI Backend" as API
 
 package "AI Orchestration" {
 
-    rectangle "LangGraph Runtime" as LangGraph
-
-    rectangle "Worker Agent" as Worker
+    rectangle "Knowledge Retrieval Agent" as Agent
 
 }
 
-package "Retrieval Pipeline" {
+package "Knowledge Retrieval Services" {
 
-    rectangle "Query Embedding Generator" as QueryEmbedding
+    rectangle "Search Service" as Search
 
-    rectangle "Semantic Search" as SemanticSearch
+    rectangle "Query Embedding Service" as QueryEmbedding
+
+    rectangle "Hybrid Retriever" as Hybrid
 
     rectangle "Metadata Filter" as MetadataFilter
 
-    rectangle "Cross Encoder Reranker" as Reranker
+    rectangle "CrossEncoder\nReranker" as Reranker
+
+    rectangle "Citation Service" as Citation
 
     rectangle "Context Builder" as ContextBuilder
 
@@ -53,11 +55,11 @@ package "Retrieval Pipeline" {
 
 package "Knowledge Platform" {
 
-    database "Qdrant Vector Database" as Qdrant
+    database "Qdrant\nVector Database" as Qdrant
 
-    database "Firestore Metadata" as Firestore
+    database "Firestore\nMetadata Registry" as Firestore
 
-    database "Google Cloud Storage" as GCS
+    database "Google Cloud Storage\nDocuments" as GCS
 
 }
 
@@ -65,39 +67,41 @@ package "Vertex AI" {
 
     rectangle "Embedding Models" as Embeddings
 
-    rectangle "Gemini Models" as Gemini
+    rectangle "Gemini LLM" as Gemini
 
 }
 
 User --> API
 
-API --> LangGraph
+API --> Agent
 
-LangGraph --> Worker
+Agent --> Search
 
-Worker --> QueryEmbedding
+Search --> QueryEmbedding
 
 QueryEmbedding --> Embeddings
 
-Embeddings --> SemanticSearch
+Search --> Hybrid
 
-SemanticSearch --> Qdrant
+Hybrid --> Qdrant
 
-SemanticSearch --> Firestore
+Hybrid --> Firestore
 
-SemanticSearch --> MetadataFilter
+Hybrid --> GCS
+
+Hybrid --> MetadataFilter
 
 MetadataFilter --> Reranker
 
-Reranker --> GCS
+Reranker --> Citation
 
-GCS --> ContextBuilder
+Citation --> ContextBuilder
 
 ContextBuilder --> Gemini
 
-Gemini --> Worker
+Gemini --> Agent
 
-Worker --> API
+Agent --> API
 
 API --> User
 

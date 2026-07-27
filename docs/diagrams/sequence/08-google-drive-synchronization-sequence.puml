@@ -1,0 +1,63 @@
+@startuml
+title Google Drive Synchronization Sequence
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+participant "Scheduler" as Scheduler
+participant "Google Drive\nConnector" as Connector
+participant "Google Drive API" as Drive
+participant "Document Service" as Document
+participant "Storage Service" as Storage
+database "Google Cloud Storage" as GCS
+participant "Ingestion Service" as Ingestion
+database "Firestore\nRegistry" as Registry
+
+Scheduler -> Connector : Trigger scheduled sync
+activate Connector
+
+Connector -> Drive : List modified files
+activate Drive
+Drive --> Connector : File metadata
+deactivate Drive
+
+loop For each modified file
+
+    Connector -> Drive : Download document
+    activate Drive
+    Drive --> Connector : File content
+    deactivate Drive
+
+    Connector -> Document : Register document
+    activate Document
+
+    Document -> Storage : Store document
+    activate Storage
+
+    Storage -> GCS : Upload file
+    activate GCS
+    GCS --> Storage : Object URI
+    deactivate GCS
+
+    Storage --> Document : Storage location
+    deactivate Storage
+
+    Document -> Registry : Save metadata
+    activate Registry
+    Registry --> Document : Registration complete
+    deactivate Registry
+
+    Document -> Ingestion : Trigger ingestion
+    activate Ingestion
+    Ingestion --> Document : Accepted
+    deactivate Ingestion
+
+    Document --> Connector : Registration successful
+    deactivate Document
+
+end
+
+Connector --> Scheduler : Synchronization completed
+deactivate Connector
+
+@enduml

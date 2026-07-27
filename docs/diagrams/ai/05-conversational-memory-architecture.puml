@@ -1,7 +1,7 @@
 @startuml
 
 title Enterprise AI Orchestration Platform
-title Memory Management Architecture
+title Conversational Memory Architecture
 
 !theme plain
 
@@ -39,15 +39,21 @@ package "Conversation Management" {
 
     rectangle "Prompt Builder" as PromptBuilder
 
-    rectangle "Memory Manager" as MemoryManager
+    rectangle "Conversation Memory Service" as MemoryService
 
 }
 
-package "Persistent Memory" {
+package "Knowledge Services" {
 
-    database "Firestore\nChat History" as Firestore
+    rectangle "Search Service" as Search
 
-    database "User Sessions" as Sessions
+}
+
+package "Firestore" {
+
+    database "Chat History" as ChatHistory
+
+    database "Sessions" as Sessions
 
     database "Conversation Metadata" as Metadata
 
@@ -57,7 +63,7 @@ package "AI Runtime" {
 
     rectangle "LangGraph Runtime" as LangGraph
 
-    rectangle "Gemini Models" as Gemini
+    rectangle "Gemini LLM" as Gemini
 
 }
 
@@ -69,23 +75,25 @@ API --> SessionManager
 
 SessionManager --> Sessions
 
-SessionManager --> Firestore
+SessionManager --> ChatHistory
 
-Firestore --> ContextBuilder
+ChatHistory --> ContextBuilder
 
 Sessions --> ContextBuilder
 
 ContextBuilder --> PromptBuilder
 
-PromptBuilder --> MemoryManager
+Search --> PromptBuilder
 
-MemoryManager --> LangGraph
+PromptBuilder --> MemoryService
+
+MemoryService --> LangGraph
 
 LangGraph --> Gemini
 
 Gemini --> API
 
-API --> Firestore
+API --> ChatHistory
 
 API --> Metadata
 

@@ -1,0 +1,48 @@
+@startuml
+title Citation Generation Sequence
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+participant "Workflow Service" as Workflow
+participant "Search Service" as Search
+participant "Citation Service" as Citation
+database "Firestore Registry" as Registry
+participant "Gemini" as LLM
+participant "Chat Service" as Chat
+actor User
+
+Workflow -> Search : Retrieve ranked documents
+activate Search
+
+Search --> Workflow : Search results
+deactivate Search
+
+Workflow -> Citation : Generate citations
+activate Citation
+
+loop For each retrieved document
+
+    Citation -> Registry : Get document metadata
+    activate Registry
+    Registry --> Citation : Title, URI, Version, Source
+    deactivate Registry
+
+end
+
+Citation --> Workflow : Citation list
+deactivate Citation
+
+Workflow -> LLM : Context + Citations
+activate LLM
+
+LLM --> Workflow : AI response
+deactivate LLM
+
+Workflow -> Chat : Response + Citations
+activate Chat
+
+Chat --> User : Display answer with references
+deactivate Chat
+
+@enduml

@@ -1,9 +1,14 @@
 @startuml
 
-title Enterprise AI Orchestration Platform
-title Agentic AI Reference Architecture
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' Agentic AI Reference Architecture
+'==============================================================================
 
 !theme plain
+
+title Enterprise AI Orchestration Platform
+title Agentic AI Reference Architecture
 
 left to right direction
 
@@ -25,25 +30,51 @@ skinparam PackageBorderThickness 2
 skinparam ArrowThickness 1.5
 skinparam ArrowColor #404040
 
+'==============================================================================
+' USER
+'==============================================================================
+
 actor "Business User" as User
 
 rectangle "FastAPI Backend" as API
 
-package "LangGraph Runtime" {
+'==============================================================================
+' AGENT ORCHESTRATION
+'==============================================================================
+
+package "Agent Orchestration" {
+
+rectangle "Agent Orchestrator" as Orchestrator
 
 rectangle "Planner Agent" as Planner
 
 rectangle "Supervisor Agent" as Supervisor
 
-rectangle "Worker Agent Pool" as Workers
+rectangle "Task Router" as Router
 
-rectangle "Memory Manager" as Memory
+rectangle "Specialized Agents" as Agents
 
-rectangle "Routing Engine" as Router
+rectangle "Conversation Memory" as Memory
 
-rectangle "State Manager" as State
+rectangle "Workflow State" as State
 
 }
+
+'==============================================================================
+' KNOWLEDGE SERVICES
+'==============================================================================
+
+package "Knowledge Services" {
+
+rectangle "Search Service" as Search
+
+rectangle "Citation Service" as Citation
+
+}
+
+'==============================================================================
+' MCP
+'==============================================================================
 
 package "MCP Layer" {
 
@@ -53,21 +84,21 @@ rectangle "Tool Registry" as Registry
 
 }
 
-package "Enterprise Tools" {
+'==============================================================================
+' TOOL ECOSYSTEM
+'==============================================================================
 
-rectangle "Knowledge Search" as KnowledgeSearch
+package "Enterprise Tool Ecosystem" {
 
-rectangle "SAP Connector" as SAP
+rectangle "External MCP Servers" as MCPServers
 
-rectangle "Salesforce Connector" as Salesforce
-
-rectangle "REST API Connector" as RestAPI
-
-rectangle "Email Service" as Email
-
-rectangle "Document Service" as Documents
+rectangle "Enterprise Applications" as EnterpriseApps
 
 }
+
+'==============================================================================
+' KNOWLEDGE PLATFORM
+'==============================================================================
 
 package "Knowledge Platform" {
 
@@ -79,53 +110,59 @@ database "Google Cloud Storage" as GCS
 
 }
 
+'==============================================================================
+' VERTEX AI
+'==============================================================================
+
 package "Vertex AI" {
 
-rectangle "Gemini Models" as Gemini
+rectangle "Gemini LLM" as Gemini
 
 rectangle "Embedding Models" as Embeddings
 
 }
 
+'==============================================================================
+' FLOW
+'==============================================================================
+
 User --> API
 
-API --> Planner
+API --> Orchestrator
+
+Orchestrator --> Planner
 
 Planner --> Supervisor
 
 Supervisor --> Router
 
-Router --> Workers
+Router --> Agents
 
-Workers --> Memory
+Agents --> Memory
 
-Workers --> State
+Agents --> State
 
-Workers --> MCP
+Agents --> Search
+
+Search --> Qdrant
+
+Search --> Firestore
+
+Search --> GCS
+
+Search --> Citation
+
+Citation --> Gemini
+
+Agents --> Embeddings
+
+Agents --> MCP
 
 MCP --> Registry
 
-Registry --> KnowledgeSearch
+Registry --> MCPServers
 
-Registry --> SAP
-
-Registry --> Salesforce
-
-Registry --> RestAPI
-
-Registry --> Email
-
-Registry --> Documents
-
-Workers --> Embeddings
-
-Workers --> Gemini
-
-Workers --> Qdrant
-
-Workers --> Firestore
-
-Workers --> GCS
+Registry --> EnterpriseApps
 
 Supervisor --> API
 

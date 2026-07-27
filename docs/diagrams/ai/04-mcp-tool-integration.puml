@@ -1,9 +1,14 @@
 @startuml
 
-title Enterprise AI Orchestration Platform
-title Model Context Protocol (MCP) Tool Integration
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' Model Context Protocol (MCP) Integration
+'==============================================================================
 
 !theme plain
+
+title Enterprise AI Orchestration Platform
+title Model Context Protocol (MCP) Integration
 
 left to right direction
 
@@ -25,7 +30,15 @@ skinparam PackageBorderThickness 2
 skinparam ArrowThickness 1.5
 skinparam ArrowColor #404040
 
-rectangle "Worker Agent" as Worker
+'==============================================================================
+' AGENT
+'==============================================================================
+
+rectangle "Specialized Agent" as Agent
+
+'==============================================================================
+' MCP LAYER
+'==============================================================================
 
 package "MCP Layer" {
 
@@ -35,21 +48,39 @@ package "MCP Layer" {
 
 }
 
-package "Enterprise Tools" {
+'==============================================================================
+' MCP SERVERS
+'==============================================================================
 
-    rectangle "Knowledge Search Tool" as KnowledgeTool
+package "Registered MCP Servers" {
 
-    rectangle "SAP Tool" as SAPTool
+    rectangle "Knowledge MCP Server" as KnowledgeMCP
 
-    rectangle "Salesforce Tool" as SalesforceTool
+    rectangle "SAP MCP Server" as SAPMCP
 
-    rectangle "REST API Tool" as RestTool
+    rectangle "Salesforce MCP Server" as SalesforceMCP
 
-    rectangle "Email Tool" as EmailTool
+    rectangle "REST API MCP Server" as RestMCP
 
-    rectangle "Document Tool" as DocumentTool
+    rectangle "Email MCP Server" as EmailMCP
+
+    rectangle "Document MCP Server" as DocumentMCP
 
 }
+
+'==============================================================================
+' KNOWLEDGE SERVICES
+'==============================================================================
+
+package "Knowledge Services" {
+
+    rectangle "Search Service" as Search
+
+}
+
+'==============================================================================
+' ENTERPRISE PLATFORMS
+'==============================================================================
 
 package "Enterprise Platforms" {
 
@@ -67,39 +98,40 @@ package "Enterprise Platforms" {
 
 }
 
-Worker --> MCPClient : Tool Request
+'==============================================================================
+' FLOW
+'==============================================================================
 
-MCPClient --> ToolRegistry : Discover Tool
+Agent --> MCPClient : Tool Request
 
-ToolRegistry --> KnowledgeTool
+MCPClient --> ToolRegistry : Discover Server
 
-ToolRegistry --> SAPTool
+ToolRegistry --> KnowledgeMCP
+ToolRegistry --> SAPMCP
+ToolRegistry --> SalesforceMCP
+ToolRegistry --> RestMCP
+ToolRegistry --> EmailMCP
+ToolRegistry --> DocumentMCP
 
-ToolRegistry --> SalesforceTool
+KnowledgeMCP --> Search
 
-ToolRegistry --> RestTool
+Search --> Qdrant
+Search --> Firestore
+Search --> GCS
 
-ToolRegistry --> EmailTool
+SAPMCP --> SAP
 
-ToolRegistry --> DocumentTool
+SalesforceMCP --> Salesforce
 
-KnowledgeTool --> Qdrant
-KnowledgeTool --> Firestore
-KnowledgeTool --> GCS
+RestMCP --> RestServices
 
-SAPTool --> SAP
+KnowledgeMCP --> MCPClient
+SAPMCP --> MCPClient
+SalesforceMCP --> MCPClient
+RestMCP --> MCPClient
+EmailMCP --> MCPClient
+DocumentMCP --> MCPClient
 
-SalesforceTool --> Salesforce
-
-RestTool --> RestServices
-
-KnowledgeTool --> MCPClient
-SAPTool --> MCPClient
-SalesforceTool --> MCPClient
-RestTool --> MCPClient
-EmailTool --> MCPClient
-DocumentTool --> MCPClient
-
-MCPClient --> Worker : Tool Response
+MCPClient --> Agent : Tool Response
 
 @enduml

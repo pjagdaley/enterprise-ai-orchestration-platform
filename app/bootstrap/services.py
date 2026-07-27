@@ -19,6 +19,12 @@ from app.ai.tools.postgresql_tool import PostgreSQLTool
 from app.application.services.chat_service import ChatService
 from app.domain import tools
 
+from app.ai.services.supervisor_service import SupervisorService
+from app.ai.planner.planner import Planner
+from app.ai.planner.planner_service import PlannerService
+from app.ai.workflow.workflow_service import WorkflowService
+
+
 from app.core.logging.logger import get_logger
 logger = get_logger(__name__)
 
@@ -34,6 +40,10 @@ class ApplicationServices:
         self.agent_registry: AgentRegistry | None = None
         self.workflow: WorkflowGraph | None = None
         self.chat_service: ChatService | None = None
+
+        self.supervisor_service: SupervisorService | None = None
+        self.planner_service: PlannerService | None = None
+        self.workflow_service: WorkflowService | None = None
 
     async def initialize(self) -> None:
         """
@@ -134,13 +144,37 @@ class ApplicationServices:
             tool=postgres_tool,
         )
 
-        self.agent_registry.register(postgres_agent)
+        self.agent_registry.register(postgres_agent)          
+
+        #
+        # Supervisor Service
+        #
+        self.supervisor_service = SupervisorService()
+
+        #
+        # Planner Service
+        #
+        planner = Planner()
+
+        self.planner_service = PlannerService(
+            planner=planner,
+        )
+
+        #
+        # Workflow Service
+        #
+        self.workflow_service = WorkflowService(
+            agent_registry=self.agent_registry,
+        )
 
         #
         # Workflow
         #
         self.workflow = WorkflowGraph(
-            agent_registry=self.agent_registry
+            agent_registry=self.agent_registry,
+            supervisor_service=self.supervisor_service,
+            planner_service=self.planner_service,
+            workflow_service=self.workflow_service,
         )
 
         #
@@ -149,6 +183,7 @@ class ApplicationServices:
         self.chat_service = ChatService(
             self.workflow
         )
+
 
     async def shutdown(self) -> None:
         """

@@ -1,9 +1,14 @@
 @startuml
 
-title Enterprise AI Orchestration Platform
-title RAG Reference Architecture
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' RAG Reference Architecture
+'==============================================================================
 
 !theme plain
+
+title Enterprise AI Orchestration Platform
+title RAG Reference Architecture
 
 left to right direction
 
@@ -25,7 +30,15 @@ skinparam PackageBorderThickness 2
 skinparam ArrowThickness 1.5
 skinparam ArrowColor #404040
 
+'==============================================================================
+' USER
+'==============================================================================
+
 actor "Business User" as User
+
+'==============================================================================
+' APPLICATION
+'==============================================================================
 
 package "Application Layer" {
 
@@ -33,73 +46,87 @@ rectangle "React Web Portal" as React
 
 rectangle "FastAPI Backend" as API
 
-}
-
-package "Agent Runtime" {
-
-rectangle "LangGraph Runtime" as LangGraph
-
-rectangle "Planner Agent" as Planner
-
-rectangle "Worker Agent" as Worker
+rectangle "Workflow Service" as Workflow
 
 }
+
+'==============================================================================
+' RETRIEVAL LAYER
+'==============================================================================
 
 package "Retrieval Layer" {
 
-rectangle "Hybrid Search" as HybridSearch
+rectangle "Embedding Service" as Embedding
 
-rectangle "Metadata Filter" as MetadataFilter
+rectangle "Search Service" as Search
 
-rectangle "Cross Encoder Reranker" as Reranker
+rectangle "Hybrid Retriever" as Hybrid
+
+rectangle "CrossEncoder\nReranker" as Reranker
+
+rectangle "Citation Service" as Citation
 
 }
+
+'==============================================================================
+' KNOWLEDGE PLATFORM
+'==============================================================================
 
 package "Knowledge Platform" {
 
-database "Qdrant Vector Database" as Qdrant
+database "Qdrant\nVector Database" as Qdrant
 
-database "Firestore Metadata Store" as Firestore
+database "Firestore\nMetadata Registry" as Firestore
 
-database "Google Cloud Storage" as GCS
+database "Google Cloud Storage\nDocuments" as GCS
 
 }
+
+'==============================================================================
+' VERTEX AI
+'==============================================================================
 
 package "Vertex AI" {
 
 rectangle "Embedding Models" as Embeddings
 
-rectangle "Gemini Models" as Gemini
+rectangle "Gemini LLM" as Gemini
 
 }
+
+'==============================================================================
+' REQUEST FLOW
+'==============================================================================
 
 User --> React
 
 React --> API
 
-API --> LangGraph
+API --> Workflow
 
-LangGraph --> Planner
+Workflow --> Embedding
 
-Planner --> Worker
+Embedding --> Embeddings
 
-Worker --> Embeddings
+Workflow --> Search
 
-Embeddings --> HybridSearch
+Search --> Hybrid
 
-HybridSearch --> Qdrant
+Hybrid --> Qdrant
 
-HybridSearch --> Firestore
+Hybrid --> Firestore
 
-HybridSearch --> MetadataFilter
+Hybrid --> GCS
 
-MetadataFilter --> Reranker
+Hybrid --> Reranker
 
-Reranker --> GCS
+Reranker --> Citation
 
-Worker --> Gemini
+Citation --> Gemini
 
-Gemini --> API
+Gemini --> Workflow
+
+Workflow --> API
 
 API --> React
 

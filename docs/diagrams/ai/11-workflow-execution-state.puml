@@ -1,0 +1,38 @@
+@startuml
+title Workflow Execution State Diagram
+
+skinparam shadowing false
+skinparam state {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+[*] --> Created
+
+Created --> Planning : Start Workflow
+
+Planning --> Executing : Plan Generated
+Planning --> Failed : Planning Error
+
+Executing --> WaitingForTool : Tool Required
+WaitingForTool --> Executing : Tool Completed
+
+Executing --> WaitingForUser : User Input Required
+WaitingForUser --> Executing : User Responded
+
+Executing --> Completed : Success
+
+Executing --> Failed : Unrecoverable Error
+WaitingForTool --> Failed : Tool Failure
+WaitingForUser --> Failed : Timeout
+
+Failed --> Retrying : Retry Enabled
+Retrying --> Executing : Retry Successful
+Retrying --> Failed : Retry Limit Exceeded
+
+Completed --> Archived : Retention Policy
+
+Archived --> [*]
+
+@enduml

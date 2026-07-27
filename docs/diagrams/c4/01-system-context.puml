@@ -2,7 +2,7 @@
 
 '==============================================================================
 ' Enterprise AI Orchestration Platform
-' C4 Level 1 - System Context
+' C4 Model - Level 1 - System Context
 '==============================================================================
 
 !theme plain
@@ -45,7 +45,7 @@ actor "AI\nAdministrator" as AIAdmin
 }
 
 '==============================================================================
-' SYSTEM
+' SYSTEM UNDER DESIGN
 '==============================================================================
 
 package "System Under Design" {
@@ -60,15 +60,19 @@ rectangle "Enterprise AI\nOrchestration Platform" as EAOP
 
 package "External Systems" {
 
-rectangle "Vertex AI" as VertexAI
+rectangle "Vertex AI\n(LLMs & Embeddings)" as VertexAI
 
 rectangle "Firebase\nAuthentication" as Firebase
 
 rectangle "Google Cloud\nStorage" as GCS
 
-rectangle "Enterprise\nKnowledge Sources" as Knowledge
+rectangle "Enterprise\nContent Sources" as Content
 
-rectangle "Enterprise\nSystems" as Enterprise
+rectangle "Enterprise\nApplications" as Enterprise
+
+rectangle "External MCP\nServers" as MCP
+
+rectangle "Cloud Monitoring\n& Logging" as Monitoring
 
 }
 
@@ -76,20 +80,24 @@ rectangle "Enterprise\nSystems" as Enterprise
 ' RELATIONSHIPS
 '==============================================================================
 
-BusinessUser --> EAOP : Uses
+BusinessUser --> EAOP : Uses AI Platform
 
-PlatformAdmin --> EAOP : Administers
+PlatformAdmin --> EAOP : Administers Platform
 
-AIAdmin --> EAOP : Configures
+AIAdmin --> EAOP : Configures AI Services
 
-EAOP --> VertexAI : Gemini & Embeddings
+EAOP --> Firebase : Authenticate Users
 
-EAOP --> Firebase : Authentication
+EAOP --> VertexAI : LLM & Embedding Models
 
-EAOP --> GCS : Store / Retrieve Documents
+EAOP --> GCS : Document Storage
 
-Knowledge --> GCS : Document Ingestion
+Content --> GCS : Document Ingestion
 
 EAOP --> Enterprise : Business APIs
+
+EAOP --> MCP : Tool Invocation
+
+EAOP --> Monitoring : Metrics & Logs
 
 @enduml

@@ -19,7 +19,7 @@ class SupervisorPromptBuilder:
 
         schema = {
             "agent": "",
-            "input": "",
+            "user_input": "",
             "parameters": {}
         }
 
@@ -29,7 +29,7 @@ You are the Supervisor Agent of an Enterprise AI Orchestration Platform.
 Your job is to analyze the user's request and determine:
 
 1. Which agent should handle the request.
-2. Which tool/action should be executed.
+2. What input should be sent to that agent.
 3. Which parameters should be passed.
 
 Return ONLY valid JSON.
@@ -55,10 +55,7 @@ Use for:
 - Manuals
 - FAQs
 
-Tool:
-- User question itself
-
-Example:
+Example
 
 User:
 What is the leave policy?
@@ -66,7 +63,7 @@ What is the leave policy?
 Response:
 {{
     "agent": "rag",
-    "input": "What is the leave policy?",
+    "user_input": "What is the leave policy?",
     "parameters": {{}}
 }}
 
@@ -76,7 +73,7 @@ Response:
 
 Use for local filesystem operations.
 
-Available tools:
+Supported operations:
 
 - list_directory
 - list_directory_with_sizes
@@ -97,7 +94,7 @@ List files in C:\\Temp
 Response:
 {{
     "agent": "filesystem",
-    "input": "list_directory",
+    "user_input": "list_directory",
     "parameters": {{
         "path": "C:\\\\Temp"
     }}
@@ -109,7 +106,7 @@ Show directory tree of C:\\Projects
 Response:
 {{
     "agent": "filesystem",
-    "input": "directory_tree",
+    "user_input": "directory_tree",
     "parameters": {{
         "path": "C:\\\\Projects"
     }}
@@ -121,7 +118,7 @@ Read C:\\Temp\\notes.txt
 Response:
 {{
     "agent": "filesystem",
-    "input": "read_text_file",
+    "user_input": "read_text_file",
     "parameters": {{
         "path": "C:\\\\Temp\\\\notes.txt"
     }}
@@ -133,7 +130,7 @@ Response:
 
 Use for Git repository operations.
 
-Available tools
+Supported operations:
 
 - git_status
 - git_log
@@ -153,7 +150,7 @@ Show git status
 Response:
 {{
     "agent": "git",
-    "input": "git_status",
+    "user_input": "git_status",
     "parameters": {{}}
 }}
 
@@ -163,7 +160,7 @@ Response:
 
 Use for PostgreSQL database operations.
 
-Available tool
+Supported operation
 
 - query
 
@@ -175,7 +172,7 @@ Show database tables
 Response:
 {{
     "agent": "postgres",
-    "input": "query",
+    "user_input": "query",
     "parameters": {{
         "sql": "SELECT table_name FROM information_schema.tables WHERE table_schema='public';"
     }}
@@ -187,7 +184,7 @@ Response:
 
 Use for mathematical calculations.
 
-Examples
+Example
 
 User:
 Calculate 25 * 42
@@ -195,7 +192,7 @@ Calculate 25 * 42
 Response:
 {{
     "agent": "calculator",
-    "input": "calculate",
+    "user_input": "calculate",
     "parameters": {{
         "expression": "25 * 42"
     }}
@@ -203,21 +200,98 @@ Response:
 
 ==========================================================
 
-IMPORTANT RULES
+6. planner
 
-- Use ONLY the tool names listed above.
-- Never invent a tool name.
-- Always return valid JSON.
-- Return exactly one agent.
-- If the request is about enterprise knowledge, use the rag agent.
-- If the request is about files or folders, use the filesystem agent.
-- If the request is about Git repositories, use the git agent.
-- If the request is about SQL or PostgreSQL, use the postgres agent.
-- If the request is a mathematical calculation, use the calculator agent.
+Use when the user's request requires:
+
+- Multiple sequential steps
+- Multiple tools
+- Multiple agents
+- The output of one step is required as the input of another step
+
+Do NOT use the planner if a single agent invocation can complete the request.
+
+Examples
+
+User:
+Read employees.txt, summarize it and save the summary to summary.txt
+
+Response:
+{{
+    "agent": "planner",
+    "user_input": "Read employees.txt, summarize it and save the summary to summary.txt",
+    "parameters": {{}}
+}}
+
+User:
+Search all PDF files, summarize them and write the result into report.txt
+
+Response:
+{{
+    "agent": "planner",
+    "user_input": "Search all PDF files, summarize them and write the result into report.txt",
+    "parameters": {{}}
+}}
+
+User:
+Query the database, generate a CSV file and commit it to Git
+
+Response:
+{{
+    "agent": "planner",
+    "user_input": "Query the database, generate a CSV file and commit it to Git",
+    "parameters": {{}}
+}}
+
+User:
+Read employees.txt, extract employee names and commit the result to Git
+
+Response:
+{{
+    "agent": "planner",
+    "user_input": "Read employees.txt, extract employee names and commit the result to Git",
+    "parameters": {{}}
+}}
 
 ==========================================================
+IMPORTANT RULES
+==========================================================
 
-User Request:
+- Use ONLY the agent names listed above.
+- Never invent an agent name.
+- For filesystem, git, postgres and calculator agents, use only the supported operations shown above.
+- Always return valid JSON.
+- Return exactly one agent.
+- Do NOT execute the request yourself.
+- Do NOT explain your reasoning.
+- Preserve the original user request in the "user_input" field whenever returning the planner agent.
+
+Routing Rules
+
+- If the request is about enterprise knowledge, use the rag agent.
+- If the request is about files or folders and requires only one filesystem operation, use the filesystem agent.
+- If the request is about Git and requires only one Git operation, use the git agent.
+- If the request is about SQL or PostgreSQL and requires only one query, use the postgres agent.
+- If the request is a mathematical calculation, use the calculator agent.
+
+Use the planner agent whenever the request requires:
+
+- Multiple sequential steps
+- Multiple tools
+- Multiple agents
+- The output of one step to be used by another step
+
+When using the planner, always return:
+
+{{
+    "agent": "planner",
+    "user_input": "<original user request>",
+    "parameters": {{}}
+}}
+
+==========================================================
+User Request
+==========================================================
 
 {user_input}
 """

@@ -1,0 +1,58 @@
+@startuml
+title MCP Tool Invocation Sequence
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+actor User
+
+participant "Chat Service" as Chat
+participant "Workflow Service" as Workflow
+participant "Agent Service" as Agent
+participant "MCP Service" as MCP
+participant "Tool Registry" as Registry
+participant "MCP Server" as Server
+participant "Enterprise Tool" as Tool
+
+User -> Chat : Ask question
+activate Chat
+
+Chat -> Workflow : Execute workflow
+activate Workflow
+
+Workflow -> Agent : Invoke agent
+activate Agent
+
+Agent -> MCP : Execute tool(toolId, parameters)
+activate MCP
+
+MCP -> Registry : Lookup tool
+activate Registry
+Registry --> MCP : Tool metadata\n(endpoint, capabilities)
+deactivate Registry
+
+MCP -> Server : Invoke MCP request
+activate Server
+
+Server -> Tool : Execute operation
+activate Tool
+
+Tool --> Server : Tool result
+deactivate Tool
+
+Server --> MCP : MCP response
+deactivate Server
+
+MCP --> Agent : Tool result
+deactivate MCP
+
+Agent --> Workflow : Updated execution state
+deactivate Agent
+
+Workflow --> Chat : Final response
+deactivate Workflow
+
+Chat --> User : AI response
+deactivate Chat
+
+@enduml

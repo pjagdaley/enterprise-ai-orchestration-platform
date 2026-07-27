@@ -1,0 +1,70 @@
+@startuml
+title Resiliency and Error Handling Sequence
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+actor User
+
+participant "Chat Service" as Chat
+participant "Workflow Service" as Workflow
+participant "Search Service" as Search
+participant "Retry Policy" as Retry
+participant "Circuit Breaker" as CB
+participant "Monitoring" as Monitor
+participant "Logging Service" as Logging
+participant "Alert Manager" as Alert
+
+User -> Chat : Submit query
+activate Chat
+
+Chat -> Workflow : Process request
+activate Workflow
+
+Workflow -> Search : Execute search
+activate Search
+
+Search --> Workflow : Service timeout
+deactivate Search
+
+Workflow -> Retry : Retry request
+
+loop Maximum 3 retries
+
+    Retry -> Search : Retry search
+    activate Search
+    Search --> Retry : Timeout
+    deactivate Search
+
+end
+
+Retry --> Workflow : Retry failed
+
+Workflow -> CB : Record failure
+activate CB
+
+CB --> Workflow : Circuit opened
+deactivate CB
+
+Workflow -> Logging : Log exception
+activate Logging
+Logging --> Workflow : Logged
+deactivate Logging
+
+Workflow -> Monitor : Publish metric
+activate Monitor
+Monitor --> Workflow : Metric recorded
+deactivate Monitor
+
+Workflow -> Alert : Raise alert
+activate Alert
+Alert --> Workflow : Alert created
+deactivate Alert
+
+Workflow --> Chat : Service unavailable
+deactivate Workflow
+
+Chat --> User : Please try again later
+deactivate Chat
+
+@enduml

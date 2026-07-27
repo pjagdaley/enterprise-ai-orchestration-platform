@@ -40,15 +40,15 @@ class FilesystemAgent(BaseAgent):
         logger.info("Filesystem parameters received: %s", parameters)
 
         params = FilesystemParameters.model_validate(parameters)
-
+               
         logger.info(
-            "Executing filesystem operation with path='%s'",
-            params.path,
+            "Executing filesystem action='%s'",
+            user_input,
         )
 
         return await self._tool.execute(
             ToolRequest(
-                input=user_input,
+                action=user_input,
                 parameters=params.model_dump(),
             )
         )

@@ -1,0 +1,69 @@
+@startuml
+title Multi-Agent Workflow Execution
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+
+actor User
+
+participant "Chat Service" as Chat
+participant "Workflow Service" as Workflow
+participant "Planner" as Planner
+participant "Supervisor" as Supervisor
+participant "Knowledge Agent" as KAgent
+participant "Tool Agent" as TAgent
+participant "Search Service" as Search
+participant "MCP Service" as MCP
+participant "Gemini" as LLM
+
+User -> Chat : Ask complex question
+activate Chat
+
+Chat -> Workflow : Start workflow
+activate Workflow
+
+Workflow -> Planner : Create execution plan
+activate Planner
+Planner --> Workflow : Task list
+deactivate Planner
+
+Workflow -> Supervisor : Execute plan
+activate Supervisor
+
+Supervisor -> KAgent : Retrieve enterprise knowledge
+activate KAgent
+
+KAgent -> Search : Hybrid search
+activate Search
+Search --> KAgent : Ranked context
+deactivate Search
+
+KAgent --> Supervisor : Knowledge result
+deactivate KAgent
+
+Supervisor -> TAgent : Execute external action
+activate TAgent
+
+TAgent -> MCP : Invoke enterprise tool
+activate MCP
+MCP --> TAgent : Tool response
+deactivate MCP
+
+TAgent --> Supervisor : Tool result
+deactivate TAgent
+
+Supervisor -> LLM : Generate final answer
+activate LLM
+LLM --> Supervisor : AI response
+deactivate LLM
+
+Supervisor --> Workflow : Workflow completed
+deactivate Supervisor
+
+Workflow --> Chat : Final response
+deactivate Workflow
+
+Chat --> User : Answer
+deactivate Chat
+
+@enduml

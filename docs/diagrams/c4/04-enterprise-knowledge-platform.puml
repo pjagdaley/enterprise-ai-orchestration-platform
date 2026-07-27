@@ -1,5 +1,10 @@
 @startuml
 
+'==============================================================================
+' Enterprise AI Orchestration Platform
+' Enterprise Knowledge Platform
+'==============================================================================
+
 !theme plain
 
 title Enterprise AI Orchestration Platform
@@ -18,132 +23,135 @@ skinparam defaultFontSize 14
 skinparam RectangleBorderColor #404040
 skinparam RectangleBorderThickness 1.5
 skinparam RectangleRoundCorner 10
+
 skinparam PackageBorderColor #404040
 skinparam PackageBorderThickness 2
 
 skinparam ArrowThickness 1.5
 skinparam ArrowColor #404040
 
-'=========================================================
-' Enterprise Sources
-'=========================================================
+'==============================================================================
+' ENTERPRISE CONTENT SOURCES
+'==============================================================================
 
-package "Enterprise Sources" {
+package "Enterprise Content Sources" {
+
+rectangle "Google Drive" as Drive
 
 rectangle "SharePoint" as SharePoint
 
-rectangle "Google Drive" as GoogleDrive
-
 rectangle "GitHub" as GitHub
 
-rectangle "SAP" as SAP
+rectangle "Local Uploads" as Uploads
 
-rectangle "Salesforce" as Salesforce
-
-rectangle "REST APIs" as RestAPI
+rectangle "Enterprise Applications" as Enterprise
 
 }
 
-'=========================================================
-' Ingestion Pipeline
-'=========================================================
+'==============================================================================
+' INGESTION SERVICES
+'==============================================================================
 
-package "Document Ingestion Pipeline" {
+package "Knowledge Ingestion" {
+
+rectangle "Document Service" as Document
 
 rectangle "Ingestion Service" as Ingestion
 
-rectangle "Document Parser" as Parser
+rectangle "Parser Service" as Parser
 
-rectangle "Chunking Engine" as Chunker
+rectangle "Chunking Service" as Chunker
 
-rectangle "Metadata Extractor" as Metadata
-
-rectangle "Embedding Generator" as Embedder
+rectangle "Embedding Service" as Embedding
 
 }
 
-'=========================================================
-' Vertex AI
-'=========================================================
+'==============================================================================
+' VERTEX AI
+'==============================================================================
 
 package "Vertex AI" {
 
-rectangle "Embedding Models" as Embeddings
+rectangle "Embedding Models" as Models
 
 }
 
-'=========================================================
-' Knowledge Platform
-'=========================================================
+'==============================================================================
+' KNOWLEDGE PLATFORM
+'==============================================================================
 
-package "Enterprise Knowledge Platform" {
+package "Knowledge Platform" {
 
-database "Google Cloud Storage" as GCS
+database "Google Cloud Storage\n(Document Repository)" as GCS
 
-database "Qdrant Vector Database" as Qdrant
+database "Firestore\nMetadata Registry" as Firestore
 
-database "Firestore Metadata Store" as Firestore
-
-}
-
-'=========================================================
-' Search Services
-'=========================================================
-
-package "Search Services" {
-
-rectangle "Hybrid Search" as HybridSearch
-
-rectangle "Metadata Filter" as MetadataFilter
-
-rectangle "Reranker" as Reranker
+database "Qdrant\nVector Database" as Qdrant
 
 }
 
-'=========================================================
-' Ingestion Flow
-'=========================================================
+'==============================================================================
+' QUERY SERVICES
+'==============================================================================
 
-SharePoint --> Ingestion
+package "Knowledge Retrieval" {
 
-GoogleDrive --> Ingestion
+rectangle "Search Service" as Search
 
-GitHub --> Ingestion
+rectangle "Hybrid Retriever" as Hybrid
 
-SAP --> Ingestion
+rectangle "CrossEncoder\nReranker" as Reranker
 
-Salesforce --> Ingestion
+rectangle "Citation Service" as Citation
 
-RestAPI --> Ingestion
+}
+
+'==============================================================================
+' INGESTION FLOW
+'==============================================================================
+
+Drive --> Document
+
+SharePoint --> Document
+
+GitHub --> Document
+
+Uploads --> Document
+
+Enterprise --> Document
+
+Document --> GCS
+
+Document --> Firestore
+
+Document --> Ingestion
 
 Ingestion --> Parser
 
 Parser --> Chunker
 
-Chunker --> Metadata
+Chunker --> Embedding
 
-Metadata --> Embedder
+Embedding --> Models
 
-Embedder --> Embeddings
+Embedding --> Qdrant
 
-Embedder --> Qdrant
+Embedding --> Firestore
 
-Metadata --> Firestore
+'==============================================================================
+' QUERY FLOW
+'==============================================================================
 
-Parser --> GCS
+Search --> Hybrid
 
-'=========================================================
-' Query Flow
-'=========================================================
+Hybrid --> Qdrant
 
-HybridSearch --> Qdrant
+Hybrid --> Firestore
 
-HybridSearch --> Firestore
+Hybrid --> GCS
 
-HybridSearch --> GCS
+Hybrid --> Reranker
 
-HybridSearch --> MetadataFilter
-
-MetadataFilter --> Reranker
+Reranker --> Citation
 
 @enduml
