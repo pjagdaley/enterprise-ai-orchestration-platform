@@ -69,10 +69,14 @@ class ApplicationServices:
 
         #
         # Git MCP
-        #
+        #        
         self.git_mcp_service = MCPService(
             command="uvx",
             args=[
+                "--with",
+                "mcp==1.28.1",
+                "--with",
+                "mcp-server-git",
                 "mcp-server-git",
                 "--repository",
                 r"C:\AI-ML-Projects\enterprise-ai-orchestration-platform",

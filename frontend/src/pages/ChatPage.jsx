@@ -10,7 +10,8 @@ function ChatPage() {
 
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
-
+ 
+    /*
     const handleSend = async (message) => {
 
         // Add user message
@@ -46,7 +47,8 @@ function ChatPage() {
 
         setLoading(false);
     };
-    /*
+    */
+    
     const handleSend = async (message) => {
 
         setMessages(previous => [
@@ -71,7 +73,7 @@ function ChatPage() {
                 ...previous,
                 {
                     sender: "AI",
-                    text: response.answer,
+                    text: response.response,
                     time: new Date().toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit"
@@ -93,7 +95,7 @@ function ChatPage() {
             console.error(error);
         }
 
-    }; */
+    }; 
 
     return (
         <Box>
